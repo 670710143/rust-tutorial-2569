@@ -239,14 +239,14 @@ fn describe_status(status: &PackageStatus) -> String {
 ```
 
 **Expected Output**
-
+```text
 ====================== Package Status Tracker ======================
 Your order has been placed.
 Your order has been shipped via Kerry Express.
 Peewara is delivering your package, arriving in about 1 hour(s).
 Your package has been delivered!
 ============================ Thank you ==============================
-
+```
 **Explanation**
 โปรแกรมจำลองสถานะพัสดุทั้ง 4 แบบและใช้ pattern matching ผ่าน `match` แปลแต่ละสถานะเป็นข้อความ
 ความพิเศษของตัวอย่างนี้ คือ ฟังก์ชัน `describe_status`  คืนค่าเป็น `String`  ซึ่งใช้ macro format!() เข้ามาช่วยสร้างข้อความเก็บไว้ในตัวแปร แทนการพิมพ์ออกมาตรง ๆ ในฟังก์ชันตัวเอง 
