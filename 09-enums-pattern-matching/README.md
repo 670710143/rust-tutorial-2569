@@ -518,11 +518,11 @@ fn main() {
 
 | Aspect | Rust | Other Language |
 |---|---|---|
-| Syntax | `เขียนสั้น ชัดเจน รวมการสร้างตัวแปรและแกะค่าในตัวเดียว ด้วยmatch หรือ if let` | `syntaxรก ถ้าจะเก็บค่าหลายแบบต้องใช้ std::visit กับ std::variant` |
-| Semantics / Behavior | `enum แต่ละตัวเก็บข้อมูลต่างชนิดกันได้เลย และmatchสามารถคืนค่าออกมาใช้ได้ทันที` | `enum ปกติใช้ได้แค่ทดเลขถ้าอยากใช้กับข้อมูลับซ้อนต้องใช้ std::variant` |
-| Type System | `ออกแบบเป็น Algebraic Data Types (ADTs) แท้ๆ แถมตัดปัญหาเรื่อง null ทิ้ง แล้วแทนด้วย Option` | `เป็นระบบ Class/Type แบบดั้งเดิม ยังมี nullptr ที่พร้อมจะทำให้โปรแกรมค้างได้ทุกเมื่อ` |
-| Memory Management | `จอง memory เท่ากับขนาดตัวที่ใหญ่ที่สุดบวก Tag ตัวบอกประเภท แถมมีจุด optimization ที่ไม่เสียความจำเพิ่มเลย` | `จองความจำตามโครงสร้าง Union ปกติ แต่ไม่ได้มีระบบช่วย Optimize พื้นที่เวลาจัดการกับค่านัล` |
-| Safety | `Compiler ดี แต่ต้องเขียนดักให้ครบทุกกรณี ไม่งั้นจะ Compile ไม่ผ่าน` | `Compiler ไม่ได้บังคับเช็คครบทุกเคส ส่วนใหญ่ได้แค่เตือน ถ้าลืมดักเคสแปลกๆ ไว้ โปรแกรมจะไปบั๊กตอนรัน` |
+| Syntax | `เขียนสั้น ชัดเจน รวมการสร้างตัวแปรและแกะค่าในตัวเดียว ด้วยmatch หรือ if let` | `มี Pattern Matching แต่syntaxยาว และต้องอิงกับswitchหรือinstanceof` |
+| Semantics / Behavior | `enum แต่ละตัวเก็บข้อมูลต่างชนิดกันได้เลย และmatchสามารถคืนค่าออกมาใช้ได้ทันที` | `Enum เป็น Class ชนิดพิเศษ ตัวแปรทุกอันต้องมี Field เหมือนกัน และไม่สามารถเก็บ Data โครงสร้างต่างกันในแต่ละ Variant ได้โดยตรง` |
+| Type System | `ออกแบบเป็น Algebraic Data Types ตัดปัญหาเรื่อง null ทิ้ง แล้วแทนด้วย Option`|`เป็น Object-Oriented เต็มตัว ยังมีปัญหาเรื่อง null ที่คอยสร้าง NullPointerException` |
+| Memory Management | `จองหน่วยความจำแบบ Tagged Union เท่าที่จำเป็น ทำงานไว ไม่มีระบบ Garbage Collection มาดึงเครื่อง` | `ทุกอย่างเป็น Object อยู่บน Heap Memory ทำให้กินพื้นที่มากกว่า และต้องพึ่งพา Garbage Collector คอยตามเก็บขยะ` |
+| Safety | `Compiler ดี แต่ต้องเขียนดักให้ครบทุกกรณี ไม่งั้นจะ Compile ไม่ผ่าน` | `Compiler ตรวจเช็คความครบถ้วนได้เฉพาะ sealed class หรือ enum พื้นฐาน แต่ถ้าเป็น Object ทั่วไปอาจหลุดเคส null ได้ง่าย` |
 
 ### Rust Example
 
