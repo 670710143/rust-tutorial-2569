@@ -438,7 +438,7 @@ fn main() {
 
 | Aspect | Rust | Other Language |
 |---|---|---|
-| Syntax | `[อธิบาย]` | `[อธิบาย]` |
+| Syntax | `เขียนสั้น ชัดเจน รวมการสร้างตัวแปรและแกะค่าในตัวเดียว ด้วยmatch หรือ if let` | `syntaxรก ถ้าจะเก็บค่าหลายแบบต้องใช้ std::visit กับ std::variant` |
 | Semantics / Behavior | `[อธิบาย]` | `[อธิบาย]` |
 | Type System | `[อธิบาย]` | `[อธิบาย]` |
 | Memory Management | `[อธิบาย]` | `[อธิบาย]` |
