@@ -197,51 +197,108 @@ fn main() {
 
 ## 6. Runnable Code Examples
 
-> **ข้อกำหนด:** Code ทุกตัวต้อง Compile และ Run ได้จริงก่อนนำมาใส่ในเอกสาร
+### Example 1 — `ระบบแจ้งเตือนสถานะพัสดุ (Package Status Tracker)`
 
-### Example 1 — `[ชื่อ Example]`
-
-**Purpose:** `[ต้องการสาธิตอะไร]`
+**Purpose:** ต้องการสาธิตการสร้าง Enum ที่มี variant ครบทั้ง 3 ประเภทด้วยกันคือ (unit-like, triple-like, strcut-like) และพร้อมการใช้ `match` ในการดึงข้อมูลแต่ละแบบออกมาใช้งาน (destructure) โดยให้แต่ละกรณีสร้างข้อความคืนกลับมาเป็น `String`
 
 ```rust
 fn main() {
-    // Write your runnable Rust code here
+    println("======== Package Status Tracker ========");
+    let status = vec![
+        PackageStatus::Ordered,
+        PackageStatus::Shipped("Kerry Express".to_string()), //ต้องแปลงเพราะที่รับมาคือ &str แต่ส่งไปหา String ใข้ String::from("Kerry Express")ได้
+        PackageStatus::OutForDelivery{
+            courier_name: String::from("Peewara"),
+            estimated_hours: 1
+        },
+        PackageStatus::Delivered,
+    ];
+    for s in &status {
+        println!("{}",describe_status(s));
+    }
+}
+enum PackageStatus{
+    Ordered, // unit-like
+    Shipped(String),//triple-like
+    OutForDelivery{//strcut-like
+        courier_name:String,
+        estimated_hours :u32
+    },
+    Delivered,// unit-like
+    
+}
+fn describe_status(status: &PackageStatus) -> String {
+    match status{
+        PackageStatus::Ordered => format!("Your order has been placed."),
+        PackageStatus::Shipped(courier) => format!("Your order has been shipped via {}.",courier),
+        PackageStatus::OutForDelivery{courier_name , estimated_hours } => format!("{} is delivering your package, arriving in about {} hour(s).",courier_name,estimated_hours ),
+        PackageStatus::Delivered=> format!("Your package has been delivered!"),
+    }
+
 }
 ```
 
 **Expected Output**
 
-```text
-[expected output]
-```
+====================== Package Status Tracker ======================
+Your order has been placed.
+Your order has been shipped via Kerry Express.
+Peewara is delivering your package, arriving in about 1 hour(s).
+Your package has been delivered!
+============================ Thank you ==============================
 
 **Explanation**
+โปรแกรมจำลองสถานะพัสดุทั้ง 4 แบบและใช้ pattern matching ผ่าน `match` แปลแต่ละสถานะเป็นข้อความ
+ความพิเศษของตัวอย่างนี้ คือ ฟังก์ชัน `describe_status`  คืนค่าเป็น `String`  ซึ่งใช้ macro format!() เข้ามาช่วยสร้างข้อความเก็บไว้ในตัวแปร แทนการพิมพ์ออกมาตรง ๆ ในฟังก์ชันตัวเอง 
+อีกจุดหนึ่งคือค่าที่ใส่เข้าไปใน field ประเภท `String`  ต้องแปลงจาก `&str` เป็น `String`  เป็นเพียงการยืมข้อมูลที่ต้องพึ่งพา lifetime ในขณะที่ enum ต้อง**เป็นเจ้าของ**ข้อมูลของตัวเองเพื่อให้เก็บใน `Vec` 
 
-`[อธิบาย code ทีละส่วนที่สำคัญ]`
 
 ---
 
-### Example 2 — `[ชื่อ Example]`
+### Example 2 — `ระบบตรวจเกรด (Grade Checker)`
+**Purpose:** ต้องการสาธิตการสร้าง Enum แบบที่แบบอาจจะไม่มีข้อมูลเกิดขึ้น โดยใช้ Option ในการช่วยตัดเกรด ร่วมกับการใช้ range pattern ช่วยแบ่งแกณฑ์คะแนน
 
-**Purpose:** `[ต้องการสาธิตอะไร]`
 
 ```rust
+//Option <T> enum มาตรฐานของ Rust แก้ปัญหาค่า Null
 fn main() {
-    // Write your runnable Rust code here
+    println!("=========== Grade Checker ===========");
+    let scores = [85,50,67,150];
+    for score in scores{
+        let grade = get_grade(score);
+        println!("{} points : {}",score,result(grade));
+
+    }
+}
+fn get_grade(score: i32) -> Option <char>{
+    match score{
+        80..=100 => Some('A'),
+        70..=79 => Some('B'),
+        60..=69 =>Some('C'),
+        0..=59 => Some('D'),
+        _ => None,
+    }
+}
+fn result(grade: Option<char>) -> String{
+    match grade{
+        Some(g) => format!("Your grade is {}", g), // variant ที่มีค่า -> ดึงออกมาใช้ต่อ
+        None => format!("Invalid score."),         // variant ไม่มีค่า
+    }
+
 }
 ```
 
 **Expected Output**
-
 ```text
-[expected output]
+=========== Grade Checker ===========
+85 points : Your grade is A
+50 points : Your grade is D
+67 points : Your grade is C
+150 points : Invalid score.
 ```
-
 **Explanation**
+ระบบคำนวนคะแนนในตัวแปร scores โดยทำการส่งค่าเข้าไป `get_grade()` เพื่อตัดสินว่าคะแนนนั้นแปลงเป็นเกรดได้หรือไม่ คืนค่าเป็น Option<char> แทนการใช้ "sentinel value" (เช่น คืนตัวอักษรพิเศษแทนค่าไม่ถูกต้อง)   เพื่อบังคับให้ต้องตรวจสอบก่อนใช้งานค่าเสมอ จากนั้นผลลัพธ์จะถูกส่งต่อเข้า `result()` ซึ่ง `match` ทั้ง 2 กรณี (`Some`/`None`) แล้วแปลงเป็น `String` ที่อ่านเข้าใจง่ายและพิมพ์ออกทางหน้าจอใน `main()`
 
-`[อธิบาย code]`
-
----
 
 ## 7. Common Mistakes
 
@@ -587,7 +644,7 @@ public class Main {
 
 **Member 2**
 
-`[สิ่งที่รับผิดชอบ]`
+`หัวข้อที่ 6 Runnable Code Examples และตรวจเช็คเอกสารทั้งหมด `
 
 **Member 3**
 
@@ -607,8 +664,8 @@ public class Main {
 
 1. `[The Rust Programming Language — Rust Book]`
 2. `[Rust by Example / Rust Reference]`
-3. `[Official documentation ที่เกี่ยวข้องกับ Topic]`
-4. `[แหล่งอ้างอิงเพิ่มเติม]`
+3. `[ W3Schools ]`
+4. `[ ... ]`
 
 ---
 
@@ -619,7 +676,7 @@ public class Main {
 | AI Tool | Purpose | How the Result Was Verified |
 |---|---|---|
 | `[เช่น ChatGPT]` | `[ใช้เพื่ออะไร]` | `[ตรวจสอบอย่างไร]` |
-| `[AI tool]` | `[ใช้เพื่ออะไร]` | `[ตรวจสอบอย่างไร]` |
+| `[Claude]` | `[ใช้เพื่อตรวจสอบภาพรวมของเนื้อหาเป็นหัวข้อ พร้อมบอกข้อควรระวัง และ ช่วยหาปัญหาสำหรับจัดทำโค้ดตัวอย่าง]` | `[ทำการนำผลลัพธ์ที่ได้เทียบกับเอกสารทางการเพื่อความถูกต้อง]` |
 
 ### Declaration
 
@@ -683,10 +740,10 @@ public class Main {
 
 **Repository:** `[GitHub repository URL]`
 
-**Chapter Path:** `[เช่น chapters/01-introduction/]`
+**Chapter Path:** `chapters/09-enums-pattern-matching
 
 **Final PR:** `#[PR number]`
 
-**Submitted by:** `[Group XX]`
+**Submitted by:** `Group 09`
 
 **Date:** `[YYYY-MM-DD]`
