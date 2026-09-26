@@ -545,7 +545,7 @@ fn calculate_area(shape: Shape) -> f64 {
 ### `[Other Language]` Example
 
 ```java
-# Other language code
+# java code
 sealed interface Shape permits Circle, Rectangle {}
 record Circle(double radius) implements Shape {}
 record Rectangle(double width, double height) implements Shape {}
