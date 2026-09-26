@@ -165,27 +165,52 @@ fn main() {
 
 ## 7. Common Mistakes
 
-### Mistake 1 — `[ชื่อข้อผิดพลาด]`
+### Mistake 1 — `Non-exhaustive match`
 
 **Problem**
 
-`[อธิบายปัญหา]`
+`match ใน Rust ต้อง exhaustive ครอบคลุมทุก variant ของ enum ถ้าเขียนไม่ครบ โปรแกรมจะ compile ไม่ผ่าน`
 
 **Incorrect Code**
 
 ```rust
-// Incorrect example
+enum Payment {
+    Cash,
+    CreditCard,
+    PromptPay,
+}
+
+fn main() {
+    let payment = Payment::Cash;
+
+    match payment {
+        Payment::Cash => println!("ชำระด้วยเงินสด"),
+    }
+}
 ```
 
 **Correct Code**
 
 ```rust
-// Correct example
+enum Payment {
+    Cash,
+    CreditCard,
+    PromptPay,
+}
+
+fn main() {
+    let payment = Payment::Cash;
+
+    match payment {
+        Payment::Cash => println!("ชำระด้วยเงินสด"),
+        _ => println!("ชำระด้วยวิธีอื่น"),
+    }
+}
 ```
 
 **Why?**
 
-`[อธิบายสาเหตุ]`
+`Payment มี variants 3 อัน คือ Cash , CreditCard , PromptPay แต่ match จัดการเพียง Cash จึงทำให้เกิด error non-exhaustive patterns เพราะ rust ต้อง match ครอบคลุมทุกกรณีของ enum ใน Correct Code เราใช้ _ เพื่อครอบคลุมกรณีที่เหลือให้แสดงผลออกมาเป็น "ชำระด้วยวิธีอื่น"`
 
 ---
 
