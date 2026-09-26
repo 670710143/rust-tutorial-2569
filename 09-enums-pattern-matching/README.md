@@ -11,7 +11,7 @@
 
 | # | Name | Student ID | GitHub Username | Main Responsibility |
 |---|---|---|---|---|
-| 1 | นายวุฒิชัย หลักเพชร | 670710142 | `@[กรอก GitHub username]` | Concept + Short Code Illustration (สรุปแนวคิดหลัก + โค้ดตัวอย่างสั้น) |
+| 1 | นายวุฒิชัย หลักเพชร | 670710142 | @670710142 | Concept + Short Code Illustration (สรุปแนวคิดหลัก + โค้ดตัวอย่างสั้น) |
 | 2 | นางสาวศุภิสรา สอนดี | 670710143 | @670710143 | Detailed Code + Live Demo (โค้ดเชิงลึก + สาธิตสด) |
 | 3 | นายจารุเดช พินิตศักดา | 670710144 | `@670710144` | Rust vs Other Language + PPL Analysis (เปรียบเทียบภาษา + วิเคราะห์เชิง PPL) |
 | 4 | นางสาวชัชชา เภาเสน | 670710145 | @670710145 | Exercises + Common Mistakes + Challenge (แบบฝึกหัด + ข้อผิดพลาดที่พบบ่อย + คำถามท้าทาย) |
@@ -33,85 +33,165 @@
 
 ## 3. Introduction
 
-`[เขียนเนื้อหาที่นี่ — ใช้โครงสร้างเดียวกับ rust_tutorial_template.md ฉบับเต็มที่ผู้สอนแจกให้]`
+อธิบายว่า Topic นี้คืออะไร มีความสำคัญอย่างไร และใช้แก้ปัญหาอะไรในการเขียนโปรแกรม
+
+`Enums (Enumerations) และ Pattern Matching เป็นฟีเจอร์ที่เป็นหัวใจสำคัญของการออกแบบภาษา Rust ในมุมมองของวิชาการภาษาโปรแกรม (Principles of Programming Languages) Enums ใน Rust ไม่ได้เป็นเพียงการตั้งชื่อให้ตัวเลข (Integer Constants) แบบในภาษา C/C++ หรือ Java แต่เป็น Algebraic Data Types (Sum Types) ซึ่งหมายความว่า Enum หนึ่งตัวสามารถบรรจุข้อมูลที่มีชนิด (Type) แตกต่างกันไว้ภายในได้`                                             `        เมื่อนำมารวมกับ Pattern Matching (match) ซึ่งเป็นกลไก Control Flow ที่ทรงพลัง Rust จะบังคับให้โปรแกรมเมอร์ต้องจัดการกับ "ทุกความเป็นไปได้ (Exhaustive checking)" เสมอ แนวคิดนี้ถูกนำมาใช้แก้ปัญหาที่ร้ายแรงที่สุดในโลกของการเขียนโปรแกรม เช่น การอ้างอิงค่าว่าง (Null Pointer Dereference) และการลืมดักจับ Error (Unhandled Exceptions) ทำให้โค้ดของ Rust มีความปลอดภัย (Type-safe) และคาดเดาพฤติกรรมได้สูงมาก`
 
 ---
 
 ## 4. Key Concepts
 
-### 4.1 `[Concept 1]`
+### 4.1 `Enums (Enumerations) หรือ Data Variants`
 
 **คำอธิบาย**
 
-`[อธิบายแนวคิด]`
+`Enum ใน Rust ใช้สร้าง Custom Type ที่ค่าของมันสามารถเป็นไปได้เพียง "รูปแบบใดรูปแบบหนึ่ง" จากที่กำหนดไว้ (Variants) จุดเด่นคือ แต่ละ Variant ไม่จำเป็นต้องหน้าตาเหมือนกัน มันสามารถเป็นได้ทั้งแบบไม่มีข้อมูล (Unit-like), แบบเก็บข้อมูลเป็น Tuple, หรือแบบระบุชื่อฟิลด์ (Struct-like)`
 
 **ตัวอย่าง**
 
 ```rust
+// การสร้าง Enum ที่เก็บข้อมูลได้หลายรูปแบบ
+enum Message {
+    Quit,                       // Unit-like: ไม่มีข้อมูลข้างใน
+    Move { x: i32, y: i32 },    // Struct-like: เก็บพิกัด x, y
+    Write(String),              // Tuple-like: เก็บข้อความ
+}
+
 fn main() {
-    println!("Hello, Rust!");
+    let msg1 = Message::Write(String::from("Hello PPL"));
+    let msg2 = Message::Move { x: 10, y: 20 };
 }
 ```
 
 **Explanation**
 
-`[อธิบายว่า code ทำงานอย่างไร]`
+`จากโค้ด Message คือ Type เดียว แต่สามารถบรรจุข้อมูลที่แตกต่างกันโดยสิ้นเชิงได้ ทำให้เราสามารถจัดกลุ่มข้อมูลที่เกี่ยวข้องกันไว้ภายใต้ร่มเดียวกันได้อย่างเป็นระเบียบ`
 
 ---
 
-### 4.2 `[Concept 2]`
+### 4.2 `Pattern Matching (match)`
 
-`[อธิบายแนวคิด]`
+`match คือคำสั่งควบคุมทิศทางโปรแกรม (Control Flow) คล้ายกับ switch/case แต่ทรงพลังกว่าเพราะทำหน้าที่ Extract (ดึงข้อมูล) ที่ซ่อนอยู่ใน Enum ออกมาใช้งานได้ และมีกฎเหล็กคือ Exhaustiveness (ต้องเขียนครอบคลุมทุกกรณีที่ Enum เป็นไปได้ หากเขียนไม่ครบ Compiler จะแจ้ง Error ทันที)`
 
 ```rust
 // Rust code
+enum Coin {
+    Penny,
+    Quarter(String), // เก็บชื่อรัฐของเหรียญ Quarter
+}
+
+fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => 1,
+        // Pattern Matching ดึงค่า String ออกมาใส่ตัวแปร state
+        Coin::Quarter(state) => {
+            println!("State quarter from {}!", state);
+            25
+        }
+    }
+}
 ```
+
+**Explanation**
+
+`match จะเปรียบเทียบค่า coin กับแต่ละ Pattern หากตรงกับ Quarter มันจะดึง String ที่อยู่ข้างในออกมาเก็บไว้ในตัวแปร state ให้เรานำไปปรินต์หรือประมวลผลต่อได้ทันที`
+
 
 ---
 
-### 4.3 `[Concept 3]`
+### 4.3 `การแทนที่ Null ด้วย Option<T>`
 
-`[อธิบายแนวคิด]`
+`Rust เป็นภาษาที่ไม่มีค่า Null (Null-safety) เพื่อป้องกันปัญหา Runtime Error แต่ Rust ใช้ Enum พิเศษที่มีอยู่ใน Standard Library ชื่อว่า Option<T> มาใช้แทน เพื่อสื่อถึงแนวคิดที่ว่า "อาจจะมีค่า (Some)" หรือ "ไม่มีค่า (None)"`
 
 ```rust
 // Rust code
+// Option Enum ถูก Build-in มาในภาษา หน้าตาเป็นแบบนี้:
+// enum Option<T> { Some(T), None, }
+
+fn main() {
+    let some_number: Option<i32> = Some(5);
+    let absent_number: Option<i32> = None;
+
+    match some_number {
+        Some(val) => println!("มีตัวเลขคือ: {}", val),
+        None => println!("ไม่มีข้อมูล (คล้าย Null แต่ปลอดภัย)"),
+    }
+}
 ```
+**Explanation**
+
+`เนื่องจาก Option<T> เป็น Enum การจะเอาค่า 5 ออกมาใช้บวกเลขตรงๆ จะทำไม่ได้ (Compiler จะด่า) โปรแกรมเมอร์ "ถูกบังคับ" ให้ต้องใช้ match แกะกล่อง Some และจัดการกรณี None เสมอ ทำให้ไม่มีโอกาสเกิด Null Pointer Exception`
+
 
 ---
 
-### 4.4 `[Concept 4 — ถ้ามี]`
+### 4.4 `การจัดการ Error ด้วย Result<T, E>`
 
-`[อธิบายแนวคิด]`
+`Rust ไม่มีระบบ try/catch สำหรับ Exception Handling แบบภาษา OOP ทั่วไป แต่ใช้ Enum ที่ชื่อว่า Result<T, E> สำหรับฟังก์ชันที่อาจเกิดข้อผิดพลาดได้ โดยจะคืนค่า Ok(ข้อมูล) หากสำเร็จ และคืนค่า Err(ข้อผิดพลาด) หากล้มเหลว`
 
 ```rust
 // Rust code
+// Result Enum ถูก Build-in มาในภาษา หน้าตาเป็นแบบนี้:
+// enum Result<T, E> { Ok(T), Err(E), }
+
+fn main() {
+    // การแปลง String เป็นตัวเลข อาจเกิด Error ได้
+    let parse_result: Result<i32, _> = "100a".parse(); 
+
+    match parse_result {
+        Ok(number) => println!("แปลงสำเร็จ ได้เลข: {}", number),
+        Err(e) => println!("แปลงไม่สำเร็จ เกิดข้อผิดพลาด: {}", e),
+    }
+}
 ```
+**Explanation**
+
+`การออกแบบนี้ (Return as a value) ทำให้ Error ถูกนำเสนอในรูปแบบของ Type อย่างชัดเจน ฟังก์ชันที่คืนค่า Result เป็นการประกาศให้ผู้เรียกใช้งานรู้ว่า "ฟังก์ชันนี้พังได้นะ ต้องจัดการ Error ด้วย"`
 
 ---
 
-### 4.5 `[Concept 5 — ถ้ามี]`
+### 4.5 `Concise Control Flow ด้วย if let`
 
-`[อธิบายแนวคิด]`
+`ในบางครั้ง Enum มีหลายกรณี แต่เราสนใจแค่ "กรณีเดียว" การเขียน match ดักทุกทางอาจทำให้โค้ดยาวเกินไป Rust จึงให้ Syntax Sugar ที่ชื่อว่า if let มาเพื่อลดรูปการทำ Pattern Matching ในกรณีที่เราสนใจแค่ Pattern เดียว และปล่อยผ่าน (Ignore) กรณีอื่นๆ`
 
 ```rust
 // Rust code
-```
+fn main() {
+    let config_max = Some(3u8);
 
+    // แบบที่ 1: ใช้ match (ต้องเขียน _ => () เพื่อดักกรณีที่เหลือ)
+    match config_max {
+        Some(max) => println!("The maximum is configured to be {}", max),
+        _ => (),
+    }
+
+    // แบบที่ 2: ใช้ if let (กระชับกว่า อ่านง่ายกว่า)
+    if let Some(max) = config_max {
+        println!("The maximum is configured to be {}", max);
+    }
+}
+```
+**Explanation**
+
+`if let เป็นเพียงตัวย่อของ match ที่มีแค่ขาเดียว ช่วยลดความซ้ำซ้อนของโค้ด (Boilerplate) แต่ยังคงคุณสมบัติความปลอดภัยในการแกะกล่อง (Some) เช่นเดิม`
 ---
 
 ## 5. Important Syntax / Rules
 
 | Syntax / Rule | Meaning | Example |
 |---|---|---|
-| `[syntax/rule]` | `[ความหมาย]` | `[ตัวอย่าง]` |
-| `[syntax/rule]` | `[ความหมาย]` | `[ตัวอย่าง]` |
-| `[syntax/rule]` | `[ความหมาย]` | `[ตัวอย่าง]` |
+| `enum Name { ... }` | `การประกาศสร้าง Custom Type ที่มีได้หลายรูปแบบ (Variants) โดยแต่ละแบบสามารถเก็บข้อมูลต่างชนิดกันได้` | `enum Status { Ok, Err(String) }` |
+| `match value { ... }` | `คำสั่งสำหรับตรวจสอบและแยกแยะ Enum คล้าย switch/case แต่สามารถดึงข้อมูลที่อยู่ข้างในออกมาได้` | `match status { Status::Ok => ... }` |
+| `_ => ...` | `Catch-all Pattern (Wildcard): ใช้ใน match เพื่อจัดการ "กรณีที่เหลือทั้งหมด" (เหมือน default ใน switch)` | `_ => println!("Ignore others"),` |
+| `if let Pattern = value` | `การทำ Pattern Matching แบบสั้น (Syntax Sugar) ใช้เมื่อเราต้องการดึงข้อมูลและจัดการแค่ เงื่อนไขเดียว` | `if let Some(x) = option_val { ... }` |
+| `Option<T> / Result<T, E>` | `Enum มาตรฐานของ Rust Option ใช้แทนค่า Null และ Result ใช้สำหรับจัดการ Error` | `let data: Option<i32> = Some(5);` |
 
 ### Important Rules
 
-1. `[กฎสำคัญข้อที่ 1]`
-2. `[กฎสำคัญข้อที่ 2]`
-3. `[กฎสำคัญข้อที่ 3]`
+1. `Exhaustive Matching (ต้องเช็คให้ครบทุกกรณี): กฎเหล็กของภาษา Rust คือคำสั่ง match จะต้องครอบคลุม ทุกความเป็นไปได้ ของ Enum นั้นเสมอ หากเขียนดักไว้ไม่ครบ (และไม่ใช้ _) Compiler จะแจ้ง Error ทันที ทำให้เราไม่พลาดลืมเช็คเงื่อนไขใดเงื่อนไขหนึ่ง`
+2. `No Direct Data Access (ห้ามเข้าถึงข้อมูลข้างในตรงๆ): คุณไม่สามารถเข้าถึงข้อมูลที่บรรจุอยู่ใน Enum ได้โดยตรง (เช่น message.text หรือ coin.state ทำไม่ได้) คุณ ต้อง ใช้ Pattern Matching (ผ่าน match หรือ if let) เพื่อทำหน้าที่ "แกะกล่อง" (Extract) และดึงข้อมูลออกมาสู่ Scope ปัจจุบันเสมอ`
+3. `Top-to-Bottom Evaluation (ประเมินจากบนลงล่าง): Pattern ใน match จะถูกตรวจสอบจากบนลงล่างทีละบรรทัด เมื่อเจอ Pattern แรกที่ตรงกัน โปรแกรมจะทำงานใน Block นั้นแล้วออกจาก match ทันที ดังนั้นหากใช้ _ (Catch-all) จะต้องวางไว้ล่างสุดเสมอ`
+
 
 ---
 
