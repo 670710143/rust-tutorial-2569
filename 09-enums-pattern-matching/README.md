@@ -210,7 +210,8 @@ fn main() {
 
 **Why?**
 
-`Payment มี variants 3 อัน คือ Cash , CreditCard , PromptPay แต่ match จัดการเพียง Cash จึงทำให้เกิด error non-exhaustive patterns เพราะ rust ต้อง match ครอบคลุมทุกกรณีของ enum ใน Correct Code เราใช้ _ เพื่อครอบคลุมกรณีที่เหลือให้แสดงผลออกมาเป็น "ชำระด้วยวิธีอื่น"`
+`Payment มี variants 3 อัน คือ Cash , CreditCard , PromptPay แต่ match จัดการเพียง Cash จึงทำให้เกิด error non-exhaustive เพราะ match ใน Rust ต้อง exhaustive ครอบคลุมทุก variant ของ enum 
+ใน Correct Code เราใช้ _ เพื่อครอบคลุมกรณีที่เหลือให้แสดงผลออกมาเป็น "ชำระด้วยวิธีอื่น"`
 
 ---
 
