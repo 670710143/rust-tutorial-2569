@@ -169,7 +169,7 @@ fn main() {
 
 **Problem**
 
-`match ใน Rust ต้อง exhaustive ครอบคลุมทุก variant ของ enum ถ้าเขียนไม่ครบ โปรแกรมจะ compile ไม่ผ่าน`
+`match ใน Rust ต้องครอบคลุมทุก variant ของ enum ถ้าเขียนไม่ครบ โปรแกรมจะ compile ไม่ผ่าน`
 
 **Incorrect Code**
 
@@ -179,7 +179,6 @@ enum Payment {
     CreditCard,
     PromptPay,
 }
-
 fn main() {
     let payment = Payment::Cash;
 
@@ -197,7 +196,6 @@ enum Payment {
     CreditCard,
     PromptPay,
 }
-
 fn main() {
     let payment = Payment::Cash;
 
@@ -210,32 +208,105 @@ fn main() {
 
 **Why?**
 
-`Payment มี variants 3 อัน คือ Cash , CreditCard , PromptPay แต่ match จัดการเพียง Cash จึงทำให้เกิด error non-exhaustive เพราะ match ใน Rust ต้อง exhaustive ครอบคลุมทุก variant ของ enum`
-`ใน Correct Code เราใช้ _ เพื่อครอบคลุมกรณีที่เหลือให้แสดงผลออกมาเป็น "ชำระด้วยวิธีอื่น"`
+`Payment มี variants 3 อัน คือ Cash , CreditCard , PromptPay แต่ match จัดการเพียง Cash จึงทำให้เกิด error non-exhaustive เพราะ match ใน Rust ต้องครอบคลุมทุก variant ของ enum ใน Correct Code เราจึงใช้ _ เพื่อครอบคลุมทุกกรณีที่เหลือให้แสดงผลออกมาเป็น "ชำระด้วยวิธีอื่น"`
 
 ---
 
-### Mistake 2 — `[ชื่อข้อผิดพลาด]`
+### Mistake 2 — `สับสนเรื่อง Ownership เมื่อใช้ match`
 
 **Problem**
 
-`[อธิบายปัญหา]`
+`ใช้ match value แล้วข้อมูลอย่าง String อาจถูกย้ายความเป็นเจ้าของไปใน match ทำให้ไม่สามารถใช้ตัวแปรนั้นซ้ำได้`
 
 **Incorrect Code**
 
 ```rust
-// Incorrect example
+enum Message {
+    Write(String),
+}
+fn main() {
+    let msg = Message::Write(String::from("have a nice day")) ;
+    match msg {
+        Message::Write(text) => println!("{}",text),
+    }
+    match msg {
+        Message::Write(text) => println!("{}",text),
+    }
+}
 ```
 
 **Correct Code**
 
 ```rust
-// Correct example
+enum Message {
+    Write(String),
+}
+fn main() {
+    let msg = Message::Write(String::from("have a nice day")) ;
+    match &msg {
+        Message::Write(text) => println!("{}",text),
+    }
+    match &msg {
+        Message::Write(text) => println!("{}",text),
+    }
+}
 ```
 
 **Why?**
 
-`[อธิบายสาเหตุ]`
+`match msg จะเอาค่าที่อยู่ใน msg มาใช้ใน match ถ้าข้อมูลนั้นเป็น String อาจทำให้ค่าถูกย้ายออกไปแล้วทำให้ msg ใช้ต่อไม่ได้ แต่การใช้ match &msg จะเป็นการยืมข้อมูลมาดู ทำให้ยังสามารถใช้ msg ต่อได้หลังจาก match`
+
+---
+
+### Mistake 3 — `ลำดับ Pattern ใน match ผิด`
+
+**Problem**
+
+`การเขียน pattern ที่ครอบคลุมทุกกรณีไว้ก่อน pattern ที่เฉพาะเจาะจงกว่า ทำให้ pattern ที่อยู่ด้านหลังไม่สามารถทำงานได้`
+
+**Incorrect Code**
+
+```rust
+enum Status {
+    Success,
+    Error,
+    Pending,
+}
+fn show_status(status: Status) {
+    match status {
+        Status::Success => println!("สถานะสำเร็จ"),
+        _ => println!("สถานะอื่น"),
+        Status::Error => println!("เกิดข้อผิดพลาด"),
+    }
+}
+fn main() {
+    show_status(Status::Error);
+}
+```
+
+**Correct Code**
+
+```rust
+enum Status {
+    Success,
+    Error,
+    Pending,
+}
+fn show_status(status: Status) {
+    match status {
+        Status::Success => println!("สถานะสำเร็จ"),
+        Status::Error => println!("เกิดข้อผิดพลาด"),
+        _ => println!("สถานะอื่น"),
+    }
+}
+fn main() {
+    show_status(Status::Error);
+}
+```
+
+**Why?**
+
+`match จะตรวจสอบ pattern จากบนลงล่าง ใน Incorrect Code _ หมายถึงทุกกรณีที่เหลือ จึงทำให้ Status::Error ที่อยู่ด้านหลังไม่สามารถทำงานได้ ดังนั้นควรวาง pattern ที่เฉพาะเจาะจงไว้ก่อน แล้วค่อยใช้ _ สำหรับกรณีที่เหลือ`
 
 ---
 
@@ -243,47 +314,89 @@ fn main() {
 
 > จัดทำแบบฝึกหัด **2 ข้อ** ที่สอดคล้องกับ Topic และมีระดับความยากเหมาะสม
 
-### Exercise 1 — `[ชื่อโจทย์]`
+### Exercise 1 — `Calculate Shape Area`
 
 **Problem**
 
-`[เขียนโจทย์]`
+`เขียน enum ชื่อ Shape มี variant 3 ตัว ได้แก่ Circle, Rectangle, Triangle จากนั้นเขียนฟังก์ชัน area ที่รับ Shape และคำนวณพื้นที่แต่ละรูปโดยใช้ match`
 
 **Hint**
 
-`[คำใบ้]`
+`พื้นที่วงกลม = π × r²`  
+`พื้นที่สี่เหลี่ยม = กว้าง × ยาว`  
+`พื้นที่สามเหลี่ยม = 0.5 × ฐาน × สูง`
 
 **Solution**
 
 ```rust
-// Solution code
+enum Shape {
+    Circle(f64),
+    Rectangle(f64, f64),
+    Triangle { base: f64, height: f64 },
+}
+fn area(shape: &Shape) -> f64 {
+    match shape {
+        Shape::Circle(r) => std::f64::consts::PI * r * r,
+        Shape::Rectangle(w, h) => w * h,
+        Shape::Triangle { base, height } => 0.5 * base * height,
+    }
+}
+fn main() {
+    let circle = Shape::Circle(2.0);
+    let rectangle = Shape::Rectangle(3.0, 4.0);
+    let triangle = Shape::Triangle { base: 5.0, height: 6.0 };
+    println!("Circle = {:.2}", area(&circle));
+    println!("Rectangle = {:.2}", area(&rectangle));
+    println!("Triangle = {:.2}", area(&triangle));
+}
 ```
 
 **Explanation**
 
-`[อธิบายแนวทางแก้]`
+`Shape ใช้เก็บข้อมูลของรูปแต่ละแบบ ฟังก์ชัน area ใช้ match เพื่อเช็คว่าเป็นรูปอะไรแล้วคำนวณหาพื้นที่ตามข้อมูลที่เก็บไว้ในแต่ละ variant โดยฟังก์ชันรับ &Shape เพื่อยืมค่าทำให้สามารถนำ Shape ไปใช้ต่อได้ variant ที่ใช้วงเล็บ() จะเก็บข้อมูลตามลำดับ ส่วน variant ที่ใช้ปีกกา{} จะเก็บข้อมูลโดยระบุชื่อ field`
 
 ---
 
-### Exercise 2 — `[ชื่อโจทย์]`
+### Exercise 2 — `Message Handler`
 
 **Problem**
 
-`[เขียนโจทย์]`
+`เขียน enum ชื่อ Message มี 3 variants ได้แก่ Quit, Move, Write จากนั้นเขียนฟังก์ชัน handle_message ที่ใช้ match เพื่อตรวจสอบชนิดของ message และแสดงผลลัพธ์ที่เหมาะสม`
 
 **Hint**
 
-`[คำใบ้]`
+`Quit -> แสดง "Quit"`  
+`Move -> แสดงตำแหน่ง x , y`  
+`Write -> แสดงข้อความที่ส่งมา`
 
 **Solution**
 
 ```rust
-// Solution code
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+}
+fn handle_message(message: &Message) {
+    match message {
+        Message::Quit => println!("Quit"),
+        Message::Move { x, y } => println!("Position: {}, {}", x, y),
+        Message::Write(text) => println!("Message: {}", text),
+    }
+}
+fn main() {
+    let quit = Message::Quit;
+    let move_message = Message::Move { x: 10, y: 20 };
+    let write = Message::Write(String::from("Have a nice day"));
+    handle_message(&quit);
+    handle_message(&move_message);
+    handle_message(&write);
+}
 ```
 
 **Explanation**
 
-`[อธิบายแนวทางแก้]`
+`Message ใช้เก็บข้อมูลของข้อความแต่ละประเภท โดย Quit ไม่มีข้อมูลเพิ่มเติม Move เก็บตำแหน่ง x กับ y และ Write เก็บข้อความเป็น String ฟังก์ชัน handle_message ใช้ match เพื่อตรวจสอบว่า Message เป็นแบบไหน แล้วดึงข้อมูลที่อยู่ในแต่ละ variant ออกมาแสดง`
 
 ---
 
