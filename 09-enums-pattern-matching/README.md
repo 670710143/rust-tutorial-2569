@@ -528,17 +528,42 @@ fn main() {
 
 ```rust
 // Rust code
+enum Shape {
+    Circle(f64),
+    Rectangle { width: f64, height: f64 },
+}
+
+fn calculate_area(shape: Shape) -> f64 {
+    
+    match shape {
+        Shape::Circle(radius) => std::f64::consts::PI * radius * radius,
+        Shape::Rectangle { width, height } => width * height,
+    }
+}
 ```
 
 ### `[Other Language]` Example
 
-```python
+```java
 # Other language code
+sealed interface Shape permits Circle, Rectangle {}
+record Circle(double radius) implements Shape {}
+record Rectangle(double width, double height) implements Shape {}
+
+public class Main {
+    public static double calculateArea(Shape shape) {
+        
+        return switch (shape) {
+            case Circle c -> Math.PI * c.radius() * c.radius();
+            case Rectangle r -> r.width() * r.height();
+        };
+    }
+}
 ```
 
 ### Analysis
 
-`[อธิบายความแตกต่างที่สำคัญ และเหตุผลด้านการออกแบบภาษา]`
+`ภาษา Java ต้องจอง Object ลงใน Heap และใช้ Garbage Collector คอยตามลบ ทำให้มี Overhead ในเรื่องความจำ แต่ Rust คอมไพล์ Enum ลงมาเป็นเพียง Tagged Union ขนาดเล็กกะทัดรัด ทำงานได้เร็วและกินทรัพยากรน้อยกว่า`
 
 ---
 
