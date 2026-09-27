@@ -620,11 +620,23 @@ enum Shape {
 }
 
 fn calculate_area(shape: Shape) -> f64 {
-    
     match shape {
         Shape::Circle(radius) => std::f64::consts::PI * radius * radius,
         Shape::Rectangle { width, height } => width * height,
     }
+}
+
+fn main() {
+    
+    let my_circle = Shape::Circle(5.0);
+    let my_rect = Shape::Rectangle { width: 4.0, height: 6.0 };
+
+    
+    let circle_area = calculate_area(my_circle);
+    let rect_area = calculate_area(my_rect);
+
+    println!("พื้นที่วงกลม: {}", circle_area);
+    println!("พื้นที่สี่เหลี่ยม: {}", rect_area);
 }
 ```
 
@@ -638,11 +650,21 @@ record Rectangle(double width, double height) implements Shape {}
 
 public class Main {
     public static double calculateArea(Shape shape) {
-        
         return switch (shape) {
             case Circle c -> Math.PI * c.radius() * c.radius();
             case Rectangle r -> r.width() * r.height();
         };
+    }
+
+    
+    public static void main(String[] args) {
+        
+        Shape myCircle = new Circle(5.0);
+        Shape myRect = new Rectangle(4.0, 6.0);
+
+        
+        System.out.println("พื้นที่วงกลม: " + calculateArea(myCircle));
+        System.out.println("พื้นที่สี่เหลี่ยม: " + calculateArea(myRect));
     }
 }
 ```
