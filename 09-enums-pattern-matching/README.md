@@ -523,42 +523,48 @@ fn main() {
 
 ---
 
-### Exercise 2 — `Message Handler`
+### Exercise 2 — `Library Book`
 
 **Problem**
 
-`เขียน enum ชื่อ Message มี 3 variants ได้แก่ Quit, Move, Write จากนั้นเขียนฟังก์ชัน handle_message ที่ใช้ match เพื่อตรวจสอบชนิดของ message และแสดงผลลัพธ์ที่เหมาะสม`
+`เขียน enum ชื่อ BookStatus มี 3 variants ได้แก่ Available, Borrowed, Reserved จากนั้นเขียนฟังก์ชัน check_book ที่รับ BookStatus และใช้ match เพื่อตรวจสอบสถานะของหนังสือ`
 
 **Hint**
 
-`Quit -> แสดง "Quit"`  
-`Move -> แสดงตำแหน่ง x , y`  
-`Write -> แสดงข้อความที่ส่งมา`
+`Available -> แสดง "This book is available"`  
+`Borrowed -> เก็บจำนวนวันที่หนังสือถูกยืม และแสดง"This book has been borrowed for ... days"`  
+`Reserved -> เก็บจำนวนคนที่ทำการจองหนังสือ และแสดง"This book has been reserved by ... people"`
 
 **Solution**
 
 ```rust
-enum Message {
-    Quit,
-    Move { x: i32, y: i32 },
-    Write(String),
+enum BookStatus {
+    Available,
+    Borrowed(u32),
+    Reserved(u32),
 }
-fn handle_message(message: &Message) {
-    match message {
-        Message::Quit => println!("Quit"),
-        Message::Move { x, y } => println!("Position: {}, {}", x, y),
-        Message::Write(text) => println!("Message: {}", text),
+fn check_book(status: &BookStatus) {
+    match status {
+        BookStatus::Available => println!("This book is available"),
+        BookStatus::Borrowed(days) => println!("This book has been borrowed for {} days",days),
+        BookStatus::Reserved(people) => println!("This book has been reserved by {} people",people),
     }
 }
 fn main() {
-    let quit = Message::Quit;
-    let move_message = Message::Move { x: 10, y: 20 };
-    let write = Message::Write(String::from("Have a nice day"));
-    handle_message(&quit);
-    handle_message(&move_message);
-    handle_message(&write);
+    let book1 = BookStatus::Available;
+    let book2 = BookStatus::Borrowed(4);
+    let book3 = BookStatus::Reserved(2);
+    check_book(&book1);
+    check_book(&book2);
+    check_book(&book3);
 }
 ```
+
+**Explanation**
+
+`BookStatus ใช้เก็บสถานะของหนังสือ โดย Available ไม่มีข้อมูลเพิ่มเติม Borrowed เก็บจำนวนวันที่หนังสือถูกยืมและ Reserved เก็บจำนวนคนที่ทำการจองหนังสือ ฟังก์ชัน check_book ใช้ match เพื่อตรวจสอบว่า BookStatus เป็น variantใด และดึงข้อมูลที่อยู่ภายใน Borrowed และ Reserved ออกมาแสดงผล`
+
+---
 
 **Explanation**
 
