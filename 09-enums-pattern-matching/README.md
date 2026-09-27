@@ -644,27 +644,50 @@ fn main() {
 
 ```java
 # java code
-sealed interface Shape permits Circle, Rectangle {}
-record Circle(double radius) implements Shape {}
-record Rectangle(double width, double height) implements Shape {}
 
-public class Main {
-    public static double calculateArea(Shape shape) {
-        return switch (shape) {
-            case Circle c -> Math.PI * c.radius() * c.radius();
-            case Rectangle r -> r.width() * r.height();
-        };
+interface Shape {
+    double calculateArea(); 
+}
+
+
+class Circle implements Shape {
+    private double radius;
+
+    public Circle(double radius) {
+        this.radius = radius;
     }
 
-    
+    @Override
+    public double calculateArea() {
+        return Math.PI * radius * radius; 
+    }
+}
+
+
+class Rectangle implements Shape {
+    private double width;
+    private double height;
+
+    public Rectangle(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public double calculateArea() {
+        return width * height; 
+    }
+}
+
+
+public class Main {
     public static void main(String[] args) {
-        
         Shape myCircle = new Circle(5.0);
         Shape myRect = new Rectangle(4.0, 6.0);
 
         
-        System.out.println("พื้นที่วงกลม: " + calculateArea(myCircle));
-        System.out.println("พื้นที่สี่เหลี่ยม: " + calculateArea(myRect));
+        System.out.println("พื้นที่วงกลม: " + myCircle.calculateArea());
+        System.out.println("พื้นที่สี่เหลี่ยม: " + myRect.calculateArea());
     }
 }
 ```
