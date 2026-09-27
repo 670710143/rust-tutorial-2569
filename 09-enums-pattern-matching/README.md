@@ -229,7 +229,7 @@ fn main() {
 
 ```rust
 fn main() {
-    println("======== Package Status Tracker ========");
+    println!("======== Package Status Tracker ========");
     let status = vec![
         PackageStatus::Ordered,
         PackageStatus::Shipped("Kerry Express".to_string()), //ต้องแปลงเพราะที่รับมาคือ &str แต่ส่งไปหา String ใข้ String::from("Kerry Express")ได้
@@ -373,7 +373,7 @@ fn main() {
 
 **Why?**
 
-`Payment มี variants 3 อัน คือ Cash , CreditCard , PromptPay แต่ match จัดการเพียง Cash จึงทำให้เกิด error non-exhaustive เพราะ match ใน Rust ต้องครอบคลุมทุก variant ของ enum ใน Correct Code จึงใช้ ( '_' ) เพื่อครอบคลุมทุกกรณีที่เหลือให้แสดงผลออกมาเป็น "ชำระด้วยวิธีอื่น"`
+`Payment มี variants 3 อัน คือ Cash , CreditCard , PromptPay แต่ match จัดการเพียง Cash จึงทำให้เกิด error non-exhaustive เพราะ match ใน Rust ต้องครอบคลุมทุก variant ของ enum ใน Correct Code จึงใช้ _ เพื่อครอบคลุมทุกกรณีที่เหลือให้แสดงผลออกมาเป็น "ชำระด้วยวิธีอื่น"`
 
 ---
 
@@ -519,56 +519,71 @@ fn main() {
 
 **Explanation**
 
-`Shape ใช้เก็บข้อมูลของรูปแต่ละแบบ ฟังก์ชัน area ใช้ match เพื่อเช็คว่าเป็นรูปอะไรแล้วคำนวณหาพื้นที่ตามข้อมูลที่เก็บไว้ในแต่ละ variant โดยฟังก์ชันรับ &Shape เพื่อยืมค่าทำให้สามารถนำ Shape ไปใช้ต่อได้ variant ที่ใช้วงเล็บ() จะเก็บข้อมูลตามลำดับ ส่วน variant ที่ใช้ปีกกา{} จะเก็บข้อมูลโดยระบุชื่อ field`
+`Shape ใช้เก็บข้อมูลของรูปแต่ละแบบ ฟังก์ชัน area ใช้ match เพื่อเช็คว่าเป็นรูปอะไรแล้วคำนวณหาพื้นที่ตามข้อมูลที่เก็บไว้ในแต่ละ variant โดยฟังก์ชันรับ &Shape เพื่อยืมค่า ทำให้สามารถนำ Shape ไปใช้ต่อได้ variant ที่ใช้วงเล็บ() จะเก็บข้อมูลตามลำดับ ส่วน variant ที่ใช้ปีกกา{} จะเก็บข้อมูลโดยระบุชื่อ field`
 
 ---
 
-### Exercise 2 — `Library Book`
+### Exercise 2 — `Stock Checker`
 
 **Problem**
 
-`เขียน enum ชื่อ BookStatus มี 3 variants ได้แก่ Available, Borrowed, Reserved จากนั้นเขียนฟังก์ชัน check_book ที่รับ BookStatus และใช้ match เพื่อตรวจสอบสถานะของหนังสือ`
+`เขียน enum ชื่อ Product มี 2 variants ได้แก่ Snack(ใช้ struct-variant) และ Drink(ใช้ tuple-variant) ทั้งคู่เก็บชื่อ,ราคา,จำนวนคงเหลือ จากนั้นเขียนฟังก์ชัน check_availbility ที่คืนราคาถ้าสินค้ายังมีสต็อก และคืน None ถ้าสินค้าหมด แล้วแสดงผลลัพธ์ทั้งหมดโดยใช้ if let`
 
 **Hint**
 
-`Available -> แสดง "This book is available"`  
-`Borrowed -> เก็บจำนวนวันที่หนังสือถูกยืม และแสดง"This book has been borrowed for ... days"`  
-`Reserved -> เก็บจำนวนคนที่ทำการจองหนังสือ และแสดง"This book has been reserved by ... people"`
+`ให้ price เป็นทศนิยม(f64) และ stock เป็นจำนวนเต็ม(u32)` 
 
 **Solution**
 
 ```rust
-enum BookStatus {
-    Available,
-    Borrowed(u32),
-    Reserved(u32),
+enum Product {
+    Snack{name:String ,price: f64 ,stock: u32},
+    Drink(String ,f64 ,u32),
 }
-fn check_book(status: &BookStatus) {
-    match status {
-        BookStatus::Available => println!("This book is available"),
-        BookStatus::Borrowed(days) => println!("This book has been borrowed for {} days",days),
-        BookStatus::Reserved(people) => println!("This book has been reserved by {} people",people),
+fn check_availability(product: &Product) -> Option<f64> {
+    match product {
+        Product::Snack{price , stock , ..} => {
+            if *stock > 0 {
+                Some(*price)
+            }
+            else {
+                None
+            }
+        }
+        Product::Drink(_ , price , stock) => {
+            if *stock > 0 {
+                Some(*price)
+            }
+            else {
+                None
+            }
+        }
     }
 }
 fn main() {
-    let book1 = BookStatus::Available;
-    let book2 = BookStatus::Borrowed(4);
-    let book3 = BookStatus::Reserved(2);
-    check_book(&book1);
-    check_book(&book2);
-    check_book(&book3);
+    let items = vec![
+        Product::Snack{name:String::from("Chips"), price: 20.0, stock: 5},
+        Product::Snack{name:String::from("Cookie"), price: 22.5, stock: 0},
+        Product::Drink(String::from("Cocoa"), 39.0, 1),
+        Product::Drink(String::from("Water"), 7.0, 4),
+    ];
+    for item in &items {
+        let name = match item {
+            Product::Snack{name, ..} => name,
+            Product::Drink(name ,_ ,_) => name,
+        };
+        if let Some(price) = check_availability(item) {
+            println!("{}: There are items price at {} baht", name, price);
+        } else {
+            println!("{}: Out of stock", name);
+        }
+    }
 }
 ```
 
 **Explanation**
 
-`BookStatus ใช้เก็บสถานะของหนังสือ โดย Available ไม่มีข้อมูลเพิ่มเติม Borrowed เก็บจำนวนวันที่หนังสือถูกยืมและ Reserved เก็บจำนวนคนที่ทำการจองหนังสือ ฟังก์ชัน check_book ใช้ match เพื่อตรวจสอบว่า BookStatus เป็น variantใด และดึงข้อมูลที่อยู่ภายใน Borrowed และ Reserved ออกมาแสดงผล`
-
----
-
-**Explanation**
-
-`Message ใช้เก็บข้อมูลของข้อความแต่ละประเภท โดย Quit ไม่มีข้อมูลเพิ่มเติม Move เก็บตำแหน่ง x กับ y และ Write เก็บข้อความเป็น String ฟังก์ชัน handle_message ใช้ match เพื่อตรวจสอบว่า Message เป็นแบบไหน แล้วดึงข้อมูลที่อยู่ในแต่ละ variant ออกมาแสดง`
+`Product ใช้เก็บข้อมูลของสินค้า โดย Snack ใช้ struct-variant และ Drink ใช้ tuple-variant ทั้งสองเก็บชื่อ ราคา และจำนวนสินค้าคงเหลือ ฟังก์ชัน check_availability ใช้ match เพื่อตรวจสอบว่า Product เป็น variant อะไร แล้วทำการตรวจสอบจำนวนสินค้าใน stock และคืน Some(price) หากยังมีสินค้า หรือ None หากสินค้าหมด`
 
 ---
 
@@ -721,7 +736,7 @@ public class Main {
 
 **Member 4**
 
-`[สิ่งที่รับผิดชอบ]`
+`หัวข้อที่ 7 Common Mistakes และ หัวข้อที่ 8 Exercises`
 
 > สมาชิกทุกคนต้องสามารถอธิบาย Code ของกลุ่มได้ ไม่ใช่เฉพาะส่วนที่ตนเองเขียน
 
@@ -746,7 +761,7 @@ public class Main {
 | AI Tool | Purpose | How the Result Was Verified |
 |---|---|---|
 | `[Gemni` | `[แปลเอกสาร Rust Book พร้อมสรุปเนื้อหา]` | `[อ่านทำความเข้าใจและเรียบเรียงข้อมูลใหม่]` |
-| `[Claude]` | `[ใช้เพื่อตรวจสอบภาพรวมของเนื้อหาเป็นหัวข้อ พร้อมบอกข้อควรระวัง และ ช่วยหาปัญหาสำหรับจัดทำโค้ดตัวอย่าง]` | `[นำข้อมูลที่ได้เทียบกับ Rust Book พร้อมกับทดสอบโค้ดเพื่อความถูกต้องก่อนนำมาใส่ในเอกสาร]` |
+| `[Claude]` | `[ใช้เพื่อตรวจสอบภาพรวมของเนื้อหาเป็นหัวข้อ พร้อมบอกข้อควรระวัง ช่วยหาปัญหาสำหรับจัดทำโค้ดตัวอย่าง และช่วยประเมินความยากขอโจทย์แล้วปรับปรุงให้เหมาะสมกับเนื้อหา]` | `[นำข้อมูลที่ได้เทียบกับ Rust Book พร้อมกับทดสอบโค้ดเพื่อความถูกต้องก่อนนำมาใส่ในเอกสาร]` |
 
 ### Declaration
 
