@@ -620,29 +620,25 @@ fn main() {
 
 ```rust
 // Rust code
-enum Shape {
-    Circle(f64),
-    Rectangle { width: f64, height: f64 },
+
+enum PaymentStatus {
+    Pending,                 
+    Success(u32),            
+    Failed(String),          
 }
 
-fn calculate_area(shape: Shape) -> f64 {
-    match shape {
-        Shape::Circle(radius) => std::f64::consts::PI * radius * radius,
-        Shape::Rectangle { width, height } => width * height,
+fn check_payment(status: PaymentStatus) {
+    
+    match status {
+        PaymentStatus::Pending => println!("กำลังตรวจสอบชำระเงิน..."),
+        PaymentStatus::Success(id) => println!("ชำระเงินสำเร็จ! รหัสสลิป: {id}"),
+        PaymentStatus::Failed(reason) => println!("ชำระเงินไม่สำเร็จ: {reason}"),
     }
 }
 
 fn main() {
-    
-    let my_circle = Shape::Circle(5.0);
-    let my_rect = Shape::Rectangle { width: 4.0, height: 6.0 };
-
-    
-    let circle_area = calculate_area(my_circle);
-    let rect_area = calculate_area(my_rect);
-
-    println!("พื้นที่วงกลม: {}", circle_area);
-    println!("พื้นที่สี่เหลี่ยม: {}", rect_area);
+    let status = PaymentStatus::Success(98765);
+    check_payment(status);
 }
 ```
 
@@ -651,49 +647,42 @@ fn main() {
 ```java
 # java code
 
-interface Shape {
-    double calculateArea(); 
+interface PaymentStatus {
+    void check();
 }
 
 
-class Circle implements Shape {
-    private double radius;
-
-    public Circle(double radius) {
-        this.radius = radius;
-    }
-
-    @Override
-    public double calculateArea() {
-        return Math.PI * radius * radius; 
+class Pending implements PaymentStatus {
+    public void check() {
+        System.out.println("กำลังตรวจสอบชำระเงิน...");
     }
 }
 
 
-class Rectangle implements Shape {
-    private double width;
-    private double height;
+class Success implements PaymentStatus {
+    private int transactionId;
+    public Success(int id) { this.transactionId = id; }
 
-    public Rectangle(double width, double height) {
-        this.width = width;
-        this.height = height;
+    public void check() {
+        System.out.println("ชำระเงินสำเร็จ! รหัสสลิป: " + transactionId);
     }
+}
 
-    @Override
-    public double calculateArea() {
-        return width * height; 
+
+class Failed implements PaymentStatus {
+    private String reason;
+    public Failed(String reason) { this.reason = reason; }
+
+    public void check() {
+        System.out.println("ชำระเงินไม่สำเร็จ: " + reason);
     }
 }
 
 
 public class Main {
     public static void main(String[] args) {
-        Shape myCircle = new Circle(5.0);
-        Shape myRect = new Rectangle(4.0, 6.0);
-
-        
-        System.out.println("พื้นที่วงกลม: " + myCircle.calculateArea());
-        System.out.println("พื้นที่สี่เหลี่ยม: " + myRect.calculateArea());
+        PaymentStatus status = new Success(98765);
+        status.check();
     }
 }
 ```
