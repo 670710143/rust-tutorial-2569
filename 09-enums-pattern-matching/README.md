@@ -782,7 +782,7 @@ public class Main {
 | Member | Issues | Commits | Pull Requests | Code Reviews | Contribution |
 |---|---:|---:|---:|---:|---|
 | Member 1 | `0` | `2` | `1` | `0` | `เขียนเนื้อหาหัวข้อที่ 1 - 5 โดยทำหน้าที่สรุปแนวคิดหลัก อธิบายโค้ด syntax พร้อมตัวอย่างโค้ดอย่างสั้น` |
-| Member 2 | `0` | `8` | `0` | `0` | `จัดทำหัวข้อที่ 6 Runnable Code Examples ทดสอบโค้ด ปรับแก้คำ และตรวจเช็คเอกสารทั้งหมด` |
+| Member 2 | `0` | `9` | `0` | `0` | `จัดทำหัวข้อที่ 6 Runnable Code Examples ทดสอบโค้ด ปรับแก้คำ และตรวจเช็คเอกสารทั้งหมด` |
 | Member 3 | `0` | `13` | `0 | `0` | `จัดทำหัวข้อที่ 7 Common Mistakes และ หัวข้อที่ 8 Exercises` |
 | Member 4 | `0` | `15` | `0` | `0` | `จัดทำหัวข้อที่ 9 PPL Perspective และ หัวข้อที่ 10 Rust vs Other Language ทดสอบโค้ด` |
 
@@ -828,7 +828,7 @@ public class Main {
 
 **Chapter Path:** `chapters/09-enums-pattern-matching`
 
-**Final PR:** `#[PR number]`
+**Final PR:** `#15`
 
 **Submitted by:** `Group 09`
 
