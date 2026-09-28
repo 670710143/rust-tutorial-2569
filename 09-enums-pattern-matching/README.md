@@ -497,13 +497,13 @@ fn main() {
 
 ```rust
 enum Shape {
-    Circle(f64),
-    Rectangle(f64, f64),
-    Triangle { base: f64, height: f64 },
+    Circle(f64),   //tuple-like
+    Rectangle(f64, f64),   //tuple-like
+    Triangle { base: f64, height: f64 },   //struct-like
 }
 fn area(shape: &Shape) -> f64 {
     match shape {
-        Shape::Circle(r) => std::f64::consts::PI * r * r,
+        Shape::Circle(r) => std::f64::consts::PI * r * r,   //std::f64::consts::PI หมายถึง ค่าคงที่ของ π (ประมาณ 3.14)
         Shape::Rectangle(w, h) => w * h,
         Shape::Triangle { base, height } => 0.5 * base * height,
     }
@@ -512,7 +512,7 @@ fn main() {
     let circle = Shape::Circle(2.0);
     let rectangle = Shape::Rectangle(3.0, 4.0);
     let triangle = Shape::Triangle { base: 5.0, height: 6.0 };
-    println!("Circle = {:.2}", area(&circle));
+    println!("Circle = {:.2}", area(&circle));   //แสดงผลลัพธ์เป็นทศนิยม 2 ตำแหน่ง
     println!("Rectangle = {:.2}", area(&rectangle));
     println!("Triangle = {:.2}", area(&triangle));
 }
@@ -528,7 +528,7 @@ fn main() {
 
 **Problem**
 
-`เขียน enum ชื่อ Product มี 2 variants ได้แก่ Snack(ใช้ struct-variant) และ Drink(ใช้ tuple-variant) ทั้งคู่เก็บชื่อ,ราคา,จำนวนคงเหลือ จากนั้นเขียนฟังก์ชัน check_availbility ที่คืนราคาถ้าสินค้ายังมีสต็อก และคืน None ถ้าสินค้าหมด แล้วแสดงผลลัพธ์ทั้งหมดโดยใช้ if let`
+`เขียน enum ชื่อ Product มี 2 variants ได้แก่ Snack(ใช้ Struct-variant) และ Drink(ใช้ Tuple-variant) ทั้งคู่เก็บชื่อ,ราคา,จำนวนคงเหลือ จากนั้นเขียนฟังก์ชัน check_availbility ที่คืนราคาถ้าสินค้ายังมีสต็อก และคืน None ถ้าสินค้าหมด แล้วแสดงผลลัพธ์ทั้งหมดโดยใช้ if let`
 
 **Hint**
 
@@ -538,12 +538,12 @@ fn main() {
 
 ```rust
 enum Product {
-    Snack{name:String ,price: f64 ,stock: u32},
-    Drink(String ,f64 ,u32),
+    Snack{name:String ,price: f64 ,stock: u32},   //struct-like
+    Drink(String ,f64 ,u32),   //tuple-like
 }
 fn check_availability(product: &Product) -> Option<f64> {
     match product {
-        Product::Snack{price , stock , ..} => {
+        Product::Snack{price , stock , ..} => {   //ดึง price และ stock จาก field โดยใช้ชื่อ และไม่สนใจค่าที่เหลือ
             if *stock > 0 {
                 Some(*price)
             }
@@ -551,7 +551,7 @@ fn check_availability(product: &Product) -> Option<f64> {
                 None
             }
         }
-        Product::Drink(_ , price , stock) => {
+        Product::Drink(_ , price , stock) => {   //ดึงค่าตามตำแหน่ง และใช้_เพื่อไม่สนใจค่าตัวแรก
             if *stock > 0 {
                 Some(*price)
             }
@@ -570,8 +570,8 @@ fn main() {
     ];
     for item in &items {
         let name = match item {
-            Product::Snack{name, ..} => name,
-            Product::Drink(name ,_ ,_) => name,
+            Product::Snack{name, ..} => name,   //ใน struct-like ใช้ .. หมายถึงไม่สนใจค่าที่เหลือ
+            Product::Drink(name ,_ ,_) => name,   //ใน tuple-like ใช้ _ หมายถึงไม่สนใจค่าที่ตำแหน่งนั้น
         };
         if let Some(price) = check_availability(item) {
             println!("{}: There are items price at {} baht", name, price);
