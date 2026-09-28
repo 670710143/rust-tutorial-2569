@@ -733,7 +733,7 @@ public class Main {
 
 **Member 3**
 
-`[สิ่งที่รับผิดชอบ]`
+`หัวข้อที่9 PPL Perspective และ หัวข้อที่10 Rust vs Other Language `
 
 **Member 4**
 
@@ -813,8 +813,8 @@ public class Main {
 - [x] Code Compile และ Run ได้จริง
 - [x] Common Mistakes
 - [x] Exercises 2 ข้อ พร้อม Solutions
-- [ ] PPL Perspective
-- [ ] Rust vs Other Language
+- [x] PPL Perspective
+- [x] Rust vs Other Language
 - [x] References อย่างน้อย 4 แหล่ง
 - [ ] AI Usage Declaration
 - [x] GitHub Contribution
