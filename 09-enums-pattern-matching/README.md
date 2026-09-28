@@ -661,7 +661,7 @@ fn main() {
 ### `[Other Language]` Example
 
 ```java
-# java code
+// java code
 
 interface PaymentStatus {
     void check();
@@ -809,15 +809,15 @@ public class Main {
 - [x] Key Concepts ครบถ้วน
 - [x] Syntax / Rules
 - [ ] Runnable Code Examples
-- [ ] Code Compile และ Run ได้จริง
-- [ ] Common Mistakes
-- [ ] Exercises 2 ข้อ พร้อม Solutions
+- [x] Code Compile และ Run ได้จริง
+- [x] Common Mistakes
+- [x] Exercises 2 ข้อ พร้อม Solutions
 - [ ] PPL Perspective
 - [ ] Rust vs Other Language
 - [x] References อย่างน้อย 4 แหล่ง
 - [ ] AI Usage Declaration
 - [x] GitHub Contribution
-- [ ] สมาชิกทั้ง 4 คนมีส่วนร่วม
+- [x] สมาชิกทั้ง 4 คนมีส่วนร่วม
 - [ ] สมาชิกทั้ง 4 คนพร้อมนำเสนอคนละ 5 นาที
 - [ ] สมาชิกทุกคนสามารถอธิบาย Code ของกลุ่มได้
 
