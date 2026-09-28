@@ -210,7 +210,8 @@ fn main() {
 | `match value { ... }` | `คำสั่งสำหรับตรวจสอบและแยกแยะ Enum คล้าย switch/case แต่สามารถดึงข้อมูลที่อยู่ข้างในออกมาได้` | `match status { Status::Ok => ... }` |
 | `_ => ...` | `Catch-all Pattern (Wildcard): ใช้ใน match เพื่อจัดการ "กรณีที่เหลือทั้งหมด" (เหมือน default ใน switch)` | `_ => println!("Ignore others"),` |
 | `if let Pattern = value` | `การทำ Pattern Matching แบบสั้น (Syntax Sugar) ใช้เมื่อเราต้องการดึงข้อมูลและจัดการแค่ เงื่อนไขเดียว` | `if let Some(x) = option_val { ... }` |
-| `Option<T> / Result<T, E>` | `Enum มาตรฐานของ Rust Option ใช้แทนค่า Null และ Result ใช้สำหรับจัดการ Error` | `let data: Option<i32> = Some(5);` |
+| `Option<T>`  | `Enum มาตรฐานของ Rust Option ใช้แทนค่า Null`  | `let data: Option<i32> = Some(5);` |
+| `Result<T, E>` | ` Result ใช้สำหรับจัดการ Error` | `Ok(num) => println!("Success! ", num), `|
 
 ### Important Rules
 
