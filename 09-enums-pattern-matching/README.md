@@ -659,7 +659,7 @@ fn main() {
     
     let status = PaymentStatus::Success(98765);
     
-    // เรียกใช้ฟังก์ชัน check_payment
+    // เรียกใช้ฟังก์ชัน 
     check_payment(status);
 }
 ```
