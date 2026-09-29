@@ -8,4 +8,7 @@ enum Message {
 fn main() {
     let msg1 = Message::Write(String::from("Hello PPL"));
     let msg2 = Message::Move { x: 10, y: 20 };
+    
+    println!("{:?}", msg1);
+    println!("{:?}", msg2);
 }
