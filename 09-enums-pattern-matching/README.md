@@ -733,6 +733,114 @@ public class Main {
     }
 }
 ```
+```C++
+//C++
+#include 
+#include 
+
+// ประกาศ Interface (Abstract Base Class)
+class PaymentStatus {
+public:
+    virtual void check() const = 0; // Pure virtual function
+    virtual ~PaymentStatus() = default; // Virtual destructor สำหรับ Polymorphism
+};
+
+// สร้างคลาส Pending
+class Pending : public PaymentStatus {
+public:
+    void check() const override {
+        std::cout << "กำลังตรวจสอบชำระเงิน..." << std::endl;
+    }
+};
+
+// สร้างคลาส Success
+class Success : public PaymentStatus {
+private:
+    int transactionId;
+
+public:
+    // คอนสตรัคเตอร์รับค่า id มาบันทึกไว้
+    Success(int id) : transactionId(id) {}
+
+    void check() const override {
+        std::cout << "ชำระเงินสำเร็จ! รหัสสลิป: " << transactionId << std::endl;
+    }
+};
+
+// สร้างคลาส Failed
+class Failed : public PaymentStatus {
+private:
+    std::string reason;
+
+public:
+    // คอนสตรัคเตอร์รับข้อความสาเหตุมาบันทึกไว้
+    Failed(const std::string& reason) : reason(reason) {}
+
+    void check() const override {
+        std::cout << "ชำระเงินไม่สำเร็จ: " << reason << std::endl;
+    }
+};
+
+int main() {
+    // ใช้ Pointer ของ Class แม่ (Interface) เพื่อเรียกใช้ Polymorphism
+    PaymentStatus* status = new Success(98765);
+
+    // เรียกใช้เมธอด
+    status->check();
+
+    // คืนหน่วยกิต
+    delete status;
+
+    return 0;
+}
+```
+```Python
+//python
+from abc import ABC, abstractmethod
+
+
+# ประกาศ Interface (Abstract Base Class)
+class PaymentStatus(ABC):
+
+  @abstractmethod
+  def check(self):
+    pass
+
+
+# สร้างคลาส Pending
+class Pending(PaymentStatus):
+
+  def check(self):
+    print("กำลังตรวจสอบชำระเงิน...")
+
+
+# สร้างคลาส Success
+class Success(PaymentStatus):
+
+  def __init__(self, transaction_id: int):
+    self.transaction_id = transaction_id  # บันทึกค่า id ไว้
+
+  def check(self):
+    print(f"ชำระเงินสำเร็จ! รหัสสลิป: {self.transaction_id}")
+
+
+# สร้างคลาส Failed
+class Failed(PaymentStatus):
+
+  def __init__(self, reason: str):
+    self.reason = reason  # บันทึกข้อความสาเหตุไว้
+
+  def check(self):
+    print(f"ชำระเงินไม่สำเร็จ: {self.reason}")
+
+
+# การใช้งานในฟังก์ชั่นหลัก
+if __name__ == "__main__":
+  status: PaymentStatus = Success(98765)
+
+  # เรียกใช้เมธอด
+  status.check()
+```
 
 ### Analysis
 
