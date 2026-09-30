@@ -844,8 +844,23 @@ if __name__ == "__main__":
 
 ### Analysis
 
-`ใน Rust เราสามารถรวบรวมรูปแบบการแจ้งเตือนทั้งหมดไว้ใน enum เพียงตัวเดียว โดยแต่ละ Variant สามารถกำหนดให้เก็บข้อมูลโครงสร้างต่างกันได้ทันที
-ในขณะที่ Java ไม่สามารถสร้าง Enum ที่มีโครงสร้างข้อมูลต่างกันในแต่ละกรณีได้โดยตรง จึงจำเป็นต้องสร้าง interface ขึ้นมารับ และต้องเขียน record แยกเป็น 3 คลาส ทำให้โค้ดฝั่ง Java มีความซับซ้อนและต้องใช้ Boilerplate code มากกว่า`
+`Syntax & Semantics:
+Rust จัดการสถานะด้วย enum (Sum Types/Algebraic Data Types) ที่เก็บข้อมูลต่างประเภทไว้ในตัวเดียวกัน และแกะข้อมูลด้วย match ส่วนภาษาอื่น (Java, C++, Python) มักจะเน้นใช้ Class Hierarchy (Interface/Inheritance) หรือต้องพึ่งพาไลบรารีเสริม เช่น std::variant ใน C++ เพื่อให้ทำงานได้คล้ายกัน
+
+เหตุผลด้านการออกแบบภาษา (Design Philosophy):
+Rust ออกแบบมาเพื่อเน้น Data-Oriented Design การรวมสถานะที่เกี่ยวข้องกันไว้ใน enum ช่วยให้โค้ดกะทัดรัด ตรวจสอบโครงสร้างง่าย และขจัดปัญหาเกี่ยวกับ VTable/Virtual Dispatch Overhead ที่พบใน OOP ได้ในหลายกรณี
+
+Type System & Safety:
+Rust และ Java (เวอร์ชันใหม่) บังคับตรวจจับทุกกรณีใน Pattern Matching (Exhaustiveness checking) ตั้งแต่ตอน Compile ช่วยให้การันตีว่าไม่มีกรณีตกหล่น แต่ C++ และ Python ไม่ได้บังคับตรวจความครอบคลุมตั้งแต่ตอน Compile ทำให้มีความเสี่ยงเกิด Runtime Error หากจัดการไม่ครบทุกกรณี
+
+เหตุผลด้านการออกแบบภาษา (Design Philosophy):
+Rust ถูกออกแบบให้มีปรัชญา "Fearless Concurrency & Memory Safety" โดยเน้นย้ายข้อผิดพลาดทั้งหมดที่อาจเกิดขึ้นตอนใช้งาน (Runtime Error) ไปถูกดักจับล่วงหน้าตั้งแต่ตอนเขียนโค้ด (Compile Time)
+
+Memory Management:
+Rust จัดเก็บ enum เป็น Tagged Union บน Stack ได้โดยตรงโดยไม่ต้องใช้ Garbage Collector (GC) และไม่มี Overhead ต่างจาก Java และ Python ที่ต้องสร้าง Object บน Heap และใช้ GC ในการดูแล ส่วน C++ แม้จะไม่มี GC แต่เสี่ยงต่อข้อผิดพลาด Memory Leak หรือ Undefined Behavior หากเข้าถึง Type ใน Variant ผิดประเภท
+
+เหตุผลด้านการออกแบบภาษา (Design Philosophy):
+Rust ต้องการให้ประสิทธิภาพสูงสุดระดับ System Programming (Zero-cost Abstractions) เทียบเท่า C/C++ แต่ตัดปัญหาความผิดพลาดเรื่อง Memory Safety และ Data Race ออกไปโดยสมบูรณ์ผ่านกฏของการเป็นเจ้าของข้อมูล (Ownership rules)`
 
 ---
 
