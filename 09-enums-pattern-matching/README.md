@@ -734,9 +734,9 @@ public class Main {
 }
 ```
 ```C++
-//C++
-#include 
-#include 
+// C++
+#include <iostream>
+#include <string>
 
 // ประกาศ Interface (Abstract Base Class)
 class PaymentStatus {
@@ -773,7 +773,6 @@ private:
     std::string reason;
 
 public:
-    // คอนสตรัคเตอร์รับข้อความสาเหตุมาบันทึกไว้
     Failed(const std::string& reason) : reason(reason) {}
 
     void check() const override {
