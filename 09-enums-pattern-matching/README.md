@@ -844,23 +844,16 @@ if __name__ == "__main__":
 
 ### Analysis
 
-`Syntax & Semantics: 
-Rust จัดการสถานะด้วย enum ที่เก็บข้อมูลต่างประเภทไว้ในตัวเดียวกัน และแกะข้อมูลด้วย match ส่วนภาษาอื่น (Java, C++, Python) มักจะเน้นใช้ Class Hierarchy (Interface/Inheritance) หรือต้องพึ่งพาไลบรารีเสริม เช่น std::variant ใน C++ เพื่อให้ทำงานได้คล้ายกัน
+`
+---
 
-เหตุผลด้านการออกแบบภาษา: 
-Rust ออกแบบมาเพื่อเน้น Data-Oriented Design การรวมสถานะที่เกี่ยวข้องกันไว้ใน enum ช่วยให้โค้ดกะทัดรัด ตรวจสอบโครงสร้างง่าย และขจัดปัญหาเกี่ยวกับ VTable/Virtual Dispatch Overhead ที่พบใน OOP ได้ในหลายกรณี
+### Analysis
 
-Type System & Safety: 
-Rust และ Java (เวอร์ชันใหม่) บังคับตรวจจับทุกกรณีใน Pattern Matching (Exhaustiveness checking) ตั้งแต่ตอน Compile ช่วยให้การันตีว่าไม่มีกรณีตกหล่น แต่ C++ และ Python ไม่ได้บังคับตรวจความครอบคลุมตั้งแต่ตอน Compile ทำให้มีความเสี่ยงเกิด Runtime Error หากจัดการไม่ครบทุกกรณี
+ความแตกต่างสำคัญระหว่าง Rust กับภาษาอื่น (C++, Java, Python) คือการเปลี่ยนวิธีจัดการสถานะและข้อมูลหลากรูปแบบ จากเดิมที่ภาษาอื่นใช้แนวคิด **OOP / Dynamic Typing** (การใช้ Class Hierarchy, Dynamic Dispatch หรือ `std::variant`) มาเป็นการใช้ **Algebraic Data Types (Sum Types)** ผ่าน `enum` ที่แนบข้อมูลไว้ใน Variant ได้โดยตรง ร่วมกับระบบ **Exhaustive Pattern Matching (`match`)** และการจัดเก็บแบบ Tagged Union บน Stack ทำให้ Rust สามารถจัดการข้อมูลได้กะทัดรัด ตรวจสอบกรณีต่างๆ ได้อย่างรวดเร็ว และไม่มี Overhead จาก Garbage Collector (GC) หรือการจอง Heap โดยไม่จำเป็น
 
-เหตุผลด้านการออกแบบภาษา: 
-Rust ถูกออกแบบให้มีปรัชญา "Fearless Concurrency & Memory Safety" โดยเน้นย้ายข้อผิดพลาดทั้งหมดที่อาจเกิดขึ้นตอนใช้งาน (Runtime Error) ไปถูกดักจับล่วงหน้าตั้งแต่ตอนเขียนโค้ด (Compile Time)
+### เหตุผลด้านการออกแบบภาษา (Design Philosophy)
 
-Memory Management: 
-Rust จัดเก็บ enum เป็น Tagged Union บน Stack ได้โดยตรงโดยไม่ต้องใช้ Garbage Collector (GC) และไม่มี Overhead ต่างจาก Java และ Python ที่ต้องสร้าง Object บน Heap และใช้ GC ในการดูแล ส่วน C++ แม้จะไม่มี GC แต่เสี่ยงต่อข้อผิดพลาด Memory Leak หรือ Undefined Behavior หากเข้าถึง Type ใน Variant ผิดประเภท
-
-เหตุผลด้านการออกแบบภาษา: 
-Rust ต้องการให้ประสิทธิภาพสูงสุดระดับ System Programming (Zero-cost Abstractions) เทียบเท่า C/C++ แต่ตัดปัญหาความผิดพลาดเรื่อง Memory Safety และ Data Race ออกไปโดยสมบูรณ์ผ่านกฏของการเป็นเจ้าของข้อมูล (Ownership rules)`
+Rust ถูกออกแบบมาบนปรัชญา **"Zero-cost Abstractions, Compile-time Safety และ Data-Oriented Design"** โดยมุ่งเน้นย้ายข้อผิดพลาดทั้งหมดที่อาจเกิดขึ้นขณะทำงาน (Runtime Errors เช่น การลืมเช็คบางกรณี, Null Pointer หรือ Type Error) มาให้ Compiler บังคับตรวจจับให้ครบถ้วนตั้งแต่ขั้นตอน Compile Time ภาษาจึงเลือกใช้ Sum Types และ Pattern Matching เพื่อให้ได้ความปลอดภัยสูงสุดโดยไม่ต้องแลกมาด้วย Garbage Collector เหมือน Java/Python และยังคงประสิทธิภาพระดับ System-level Programming เท่า C/C++ `
 
 ---
 
