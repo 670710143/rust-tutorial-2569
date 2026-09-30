@@ -643,11 +643,16 @@ fn main() {
 
 | Aspect | Rust | Other Language |
 |---|---|---|
-| Syntax | `เขียนสั้น ชัดเจน รวมการสร้างตัวแปรและแกะค่าในตัวเดียว ด้วยmatch หรือ if let` | `C++: ใช้ enum class ร่วมกับ std::variant และเช็คด้วย std::holds_alternative หรือ std::visit` |
-| Semantics / Behavior | `enum แต่ละตัวเก็บข้อมูลต่างชนิดกันได้เลย และmatchสามารถคืนค่าออกมาใช้ได้ทันที` | `C++: Enum ดั้งเดิมถือได้แค่ค่าคงที่ตัวเลข หากต้องการให้ Enum เก็บข้อมูลต่างประเภทกัน ต้องนำ enum class มาใช้งานร่วมกับ std::variant` |
-| Type System | `ออกแบบเป็น Algebraic Data Types ตัดปัญหาเรื่อง null ทิ้ง แล้วแทนด้วย Option`|`C++: ไม่บังคับตรวจทุกกรณีแบบเบ็ดเสร็จ ยกเว้นใช้ std::visit ร่วมกับ Custom Visitor` |
-| Memory Management | `จองหน่วยความจำแบบ Tagged Union เท่าที่จำเป็น ทำงานไว ไม่มีระบบ Garbage Collection มาดึงเครื่อง` | `C++: ใช้ขนาดตามชนิดข้อมูลของ std::variant ร่วมกับ Type Index ในการระบุประเภท` |
-| Safety | `Compiler ดี แต่ต้องเขียนดักให้ครบทุกกรณี ไม่งั้นจะ Compile ไม่ผ่าน` | `C++: เสี่ยงต่อการเข้าถึงชนิดข้อมูลผิดประเภทหากใช้ std::get โดยไม่ระวัง อาจเกิด runtime exception ได้` |
+| Syntax | `เขียนสั้น ชัดเจน รวมการสร้างตัวแปรและแกะค่าในตัวเดียว ด้วยmatch หรือ if let` | `C++: ใช้ enum class ร่วมกับ std::variant และเช็คด้วย std::holds_alternative หรือ std::visit
+Java: ใช้ enum ร่วมกับ Sealed Interfaces / Classes และใช้ switch expression ในการ Pattern Matching` |
+| Semantics / Behavior | `enum แต่ละตัวเก็บข้อมูลต่างชนิดกันได้เลย และmatchสามารถคืนค่าออกมาใช้ได้ทันที` | `C++: Enum ดั้งเดิมถือได้แค่ค่าคงที่ตัวเลข หากต้องการให้ Enum เก็บข้อมูลต่างประเภทกัน ต้องนำ enum class มาใช้งานร่วมกับ std::variant
+Java: Enum แบบมาตรฐานรองรับเฉพาะการกำหนดค่าคงที่พร้อม Method หากต้องการให้เก็บข้อมูลที่มีชนิดต่างกันในแต่ละ Variant ต้องใช้ Sealed Interface ร่วมกับ Record (เรียกว่า Algebraic Data Types)` |
+| Type System | `ออกแบบเป็น Algebraic Data Types ตัดปัญหาเรื่อง null ทิ้ง แล้วแทนด้วย Option`|`C++: ไม่บังคับตรวจทุกกรณีแบบเบ็ดเสร็จ ยกเว้นใช้ std::visit ร่วมกับ Custom Visitor
+Java: รองรับ Pattern Matching ผ่าน switch บน Sealed Hierarchy และจะตรวจสอบความครอบคลุม (Exhaustive) ตั้งแต่ Java 17/21 เป็นต้นไป` |
+| Memory Management | `จองหน่วยความจำแบบ Tagged Union เท่าที่จำเป็น ทำงานไว ไม่มีระบบ Garbage Collection มาดึงเครื่อง` | `C++: ใช้ขนาดตามชนิดข้อมูลของ std::variant ร่วมกับ Type Index ในการระบุประเภท
+Java: ข้อมูล Variant หรือ Record ถูกสร้างเป็น Object บน Heap และบริหารจัดการด้วย Garbage Collector (GC)` |
+| Safety | `Compiler ดี แต่ต้องเขียนดักให้ครบทุกกรณี ไม่งั้นจะ Compile ไม่ผ่าน` | `C++: เสี่ยงต่อการเข้าถึงชนิดข้อมูลผิดประเภทหากใช้ std::get โดยไม่ระวัง อาจเกิด runtime exception ได้
+Java: ปลอดภัยในระดับ Type System แต่ยังต้องระวังเรื่อง null หากไม่ใช้ Pattern Matching ร่วมกับ Sealed Types อย่างเคร่งครัด` |
 
 ### Rust Example
 
