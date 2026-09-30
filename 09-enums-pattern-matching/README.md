@@ -844,10 +844,10 @@ if __name__ == "__main__":
 
 ### Analysis
 
-`ความแตกต่างสำคัญระหว่าง Rust กับภาษาอื่น (C++, Java, Python) คือการเปลี่ยนวิธีจัดการสถานะและข้อมูลหลากรูปแบบ จากเดิมที่ภาษาอื่นใช้แนวคิด **OOP / Dynamic Typing** (การใช้ Class Hierarchy, Dynamic Dispatch หรือ std::variant) มาเป็นการใช้ **Algebraic Data Types (Sum Types)** ผ่าน enum ที่แนบข้อมูลไว้ใน Variant ได้โดยตรง ร่วมกับระบบ **Exhaustive Pattern Matching (match)** และการจัดเก็บแบบ Tagged Union บน Stack ทำให้ Rust สามารถจัดการข้อมูลได้กะทัดรัด ตรวจสอบกรณีต่างๆ ได้อย่างรวดเร็ว และไม่มี Overhead จาก Garbage Collector (GC) หรือการจอง Heap โดยไม่จำเป็น`
+`ความแตกต่างสำคัญระหว่าง Rust กับภาษาอื่น (C++, Java, Python) คือการเปลี่ยนวิธีจัดการสถานะและข้อมูลหลากรูปแบบ จากเดิมที่ภาษาอื่นใช้แนวคิด OOP / Dynamic Typing (การใช้ Class Hierarchy, Dynamic Dispatch หรือ std::variant) มาเป็นการใช้ Algebraic Data Types (Sum Types) ผ่าน enum ที่แนบข้อมูลไว้ใน Variant ได้โดยตรง ร่วมกับระบบ Exhaustive Pattern Matching (match) และการจัดเก็บแบบ Tagged Union บน Stack ทำให้ Rust สามารถจัดการข้อมูลได้กะทัดรัด ตรวจสอบกรณีต่างๆ ได้อย่างรวดเร็ว และไม่มี Overhead จาก Garbage Collector (GC) หรือการจอง Heap โดยไม่จำเป็น`
 
 `เหตุผลด้านการออกแบบภาษา (Design Philosophy)
-Rust ถูกออกแบบมาบนปรัชญา **"Zero-cost Abstractions, Compile-time Safety และ Data-Oriented Design"** โดยมุ่งเน้นย้ายข้อผิดพลาดทั้งหมดที่อาจเกิดขึ้นขณะทำงาน (Runtime Errors เช่น การลืมเช็คบางกรณี, Null Pointer หรือ Type Error) มาให้ Compiler บังคับตรวจจับให้ครบถ้วนตั้งแต่ขั้นตอน Compile Time ภาษาจึงเลือกใช้ Sum Types และ Pattern Matching เพื่อให้ได้ความปลอดภัยสูงสุดโดยไม่ต้องแลกมาด้วย Garbage Collector เหมือน Java/Python และยังคงประสิทธิภาพระดับ System-level Programming เท่า C/C++ `
+Rust ถูกออกแบบมาบนปรัชญา "Zero-cost Abstractions, Compile-time Safety และ Data-Oriented Design" โดยมุ่งเน้นย้ายข้อผิดพลาดทั้งหมดที่อาจเกิดขึ้นขณะทำงาน (Runtime Errors เช่น การลืมเช็คบางกรณี, Null Pointer หรือ Type Error) มาให้ Compiler บังคับตรวจจับให้ครบถ้วนตั้งแต่ขั้นตอน Compile Time ภาษาจึงเลือกใช้ Sum Types และ Pattern Matching เพื่อให้ได้ความปลอดภัยสูงสุดโดยไม่ต้องแลกมาด้วย Garbage Collector เหมือน Java/Python และยังคงประสิทธิภาพระดับ System-level Programming เท่า C/C++ `
 
 ---
 
