@@ -284,49 +284,66 @@ Your package has been delivered!
 ---
 
 ### Example 2 — `ระบบตรวจเกรด (Grade Checker)`
-**Purpose:** ต้องการสาธิตการสร้าง Enum แบบที่แบบอาจจะไม่มีข้อมูลเกิดขึ้น โดยใช้ Option ในการช่วยตัดเกรด ร่วมกับการใช้ range pattern ช่วยแบ่งแกณฑ์คะแนน
+**Purpose:** ต้องการสาธิตการสร้าง Enum มาตรฐานโดยใช้ Option ในการช่วยตัดเกรด ร่วมกับการใช้ range pattern ช่วยแบ่งแกณฑ์คะแนน 
+เพื่อทำการเช็คและป้องกันข้อมูลที่ผิดพลาดที่เกิดได้ทั้งความตั้งใจหรือไม่ก็ตาม เช่น ไม่มีนักศึกษาในระบบ รายชื่อผิด หรือ คะแนนไม่อยู่ในช่วงที่กำหนดไว้ เป็นต้น
 
 
 ```rust
-//Option <T> enum มาตรฐานของ Rust แก้ปัญหาค่า Null
-fn main() {
-    println!("=========== Grade Checker ===========");
-    let scores = [85,50,67,150];
-    for score in scores{
-        let grade = get_grade(score);
-        println!("{} points : {}",score,result(grade));
-
-    }
-}
-fn get_grade(score: i32) -> Option <char>{
-    match score{
+use std::collections::HashMap;
+// [1] แปลงคะแนนเป็นเกรด 
+fn get_grade(score: i32) -> Option<char> {
+    match score {
         80..=100 => Some('A'),
         70..=79 => Some('B'),
-        60..=69 =>Some('C'),
+        60..=69 => Some('C'),
         0..=59 => Some('D'),
-        _ => None,
+        _ => None, //คะแนนติดลบหรือเกินช่วง
     }
 }
-fn result(grade: Option<char>) -> String{
-    match grade{
-        Some(g) => format!("Your grade is {}", g), // variant ที่มีค่า -> ดึงออกมาใช้ต่อ
-        None => format!("Invalid score."),         // variant ไม่มีค่า
+//[2] รายงานผลคะแนน
+fn report(db: &HashMap<&str, i32>, name: &str) {
+    // ชั้นที่ 1: ค้นหาคะแนนจากรายชื่อนักศึกษา
+    match db.get(name) { 
+        None => println!("{:<11} : Error! Not found", name), //ไม่พบชื่อ = ไม่มีเกรด (none)
+        //ขั้นที่ 2 : พบรายชื่อตรวจสอบเกรดที่่ได้
+        Some(&score) => { match get_grade(score) {
+                Some(g) => println!("{:<11} : {} points [grade {}]", name, score, g),
+                None => println!("{:<11} : Warning! {} points --> Incorrect scores", name, score),
+            }
+        }
     }
+}
+//[3] การเรียกใช้งานจริง
+fn main() {
+    println!("=========== Grade Checker ===========");
+//รายชื่อที่เก็บไว้พร้อมคะแนนรายบุคคล
+    let db = HashMap::from([
+        ("Sanruethai", 85),
+        ("Sakaodeuan", 50),
+        ("Pancheewa", 67),
+        ("Thaenrak", 150),
+    ]);
+ //รายชื่อที่จะทำการค้นหา
+    let names = ["Sanruethai", "Sakaodeuan", "Pancheewa", "Thaenrak", "Mether"];
+    for name in names {
+        report(&db, name); //รายงานผล
+    }
+}
 
-}
-```
 
 **Expected Output**
 ```text
 =========== Grade Checker ===========
-85 points : Your grade is A
-50 points : Your grade is D
-67 points : Your grade is C
-150 points : Invalid score.
+Sanruethai  : 85 points [grade A]
+Sakaodeuan  : 50 points [grade D]
+Pancheewa   : 67 points [grade C]
+Thaenrak    : Warning! 150 points --> Incorrect scores
+Mether      : Error! Not found
 ```
 **Explanation**
 
-     ระบบคำนวนคะแนนในตัวแปร scores โดยทำการส่งค่าเข้าไป `get_grade()` เพื่อตัดสินว่าคะแนนนั้นแปลงเป็นเกรดได้หรือไม่ คืนค่าเป็น Option<char> แทนการใช้ "sentinel value" (เช่น คืนตัวอักษรพิเศษแทนค่าไม่ถูกต้อง)   เพื่อบังคับให้ต้องตรวจสอบก่อนใช้งานค่าเสมอ จากนั้นผลลัพธ์จะถูกส่งต่อเข้า `result()` ซึ่ง `match` ทั้ง 2 กรณี (`Some`/`None`) แล้วแปลงเป็น `String` ที่อ่านเข้าใจง่ายและพิมพ์ออกทางหน้าจอใน `main()`
+     ระบบคำนวนคะแนนเกรดเริ่มต้นจากค้นหาว่ามีนักศึกษาคนนี้จริงไหมในระบบรายวิชา หากมีจริงให้ทำการส่ง score ของคนนั้นเข้าไป `get_grade()` เพื่อคำนวณว่าคะแนนนั้นถูกต้องและแปลงเป็นเกรดต่อไป โดยจะคืนค่าเป็น Option<char> 
+     แทนการใช้ "sentinel value" (เช่น คืนตัวอักษรพิเศษแทนค่าไม่ถูกต้อง)   เพื่อบังคับให้ต้องตรวจสอบก่อนใช้งานค่าเสมอ จากนั้นผลลัพธ์จะถูกส่งต่อเข้า `report()` ซึ่ง `match` ทั้ง 2 กรณี (`Some`/`None`) และแสดงผลตามเงื่อนไขที่ได้กำหนดไว้
 
 
 ## 7. Common Mistakes
@@ -785,7 +802,7 @@ public class Main {
 - [x] ระบุการใช้ AI อย่างโปร่งใส
 
 **รายละเอียดการใช้ AI**
-`ในขั้นตอนเตรียมเนื้อหา ใช้ในการเรียนรู้ภาษา Rust และทำความเข้าใจ ทบทวนหัวข้อให้เข้าใจมากขึ้น`
+`ในขั้นตอนเตรียมเนื้อหา ใช้ในการเรียนรู้ภาษา Rust ทำความเข้าใจเนื้อหา  เรียบเรียงคำอธิบาย และทบทวนหัวข้อให้เข้าใจมากขึ้น`
 `ในขั้นตอนการออกแบบ Exercise ใช้ AI ในการประเมินความยากของโจทย์เพื่อปรับปรุงให้เหมาะสมกับเนื้อหาที่เรียน`
 `ในขั้นตอนเปรียบเทียบความต่างของภาษา Rust และ java ใช้ AI ในการเลือกหัวข้อที่เหมาะสม เพื่อแสดงความแตกต่างให้เห็นได้ชัดเจน`
 
@@ -795,8 +812,8 @@ public class Main {
 
 | Member | Issues | Commits | Pull Requests | Code Reviews | Contribution |
 |---|---:|---:|---:|---:|---|
-| Member 1 | `0` | `2` | `1` | `0` | `เขียนเนื้อหาหัวข้อที่ 1 - 5 โดยทำหน้าที่สรุปแนวคิดหลัก อธิบายโค้ด syntax พร้อมตัวอย่างโค้ดอย่างสั้น` |
-| Member 2 | `0` | `12` | `1` | `0` | `จัดทำหัวข้อที่ 6 Runnable Code Examples ทดสอบโค้ด ปรับแก้คำ และตรวจเช็คเอกสารทั้งหมด` |
+| Member 1 | `0` | `4` | `1` | `0` | `เขียนเนื้อหาหัวข้อที่ 1 - 5 โดยทำหน้าที่สรุปแนวคิดหลัก อธิบายโค้ด syntax พร้อมตัวอย่างโค้ดอย่างสั้น` |
+| Member 2 | `0` | `20` | `1` | `0` | `จัดทำหัวข้อที่ 6 Runnable Code Examples ทดสอบโค้ด ปรับแก้คำ และตรวจเช็คเอกสารทั้งหมด` |
 | Member 3 | `0` | `16` | `0` | `0` | `จัดทำหัวข้อที่ 9 PPL Perspective และ หัวข้อที่ 10 Rust vs Other Language ` |
 | Member 4 | `0` | `10` | `1` | `0` | `จัดทำหัวข้อที่ 7 Common Mistakes และ หัวข้อที่ 8 Exercises ทดสอบโค้ด` |
 
