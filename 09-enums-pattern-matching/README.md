@@ -384,14 +384,15 @@ fn main() {
 
     match payment {
         Payment::Cash => println!("ชำระด้วยเงินสด"),
-        _ => println!("ชำระด้วยวิธีอื่น"),
+        Payment::CreditCard => println!("ชำระด้วยบัตรเครดิต"),
+        Payment::PromptPay => println!("ชำระด้วย PromptPay"),
     }
 }
 ```
 
 **Why?**
 
-`Payment มี variants 3 อัน คือ Cash , CreditCard , PromptPay แต่ match จัดการเพียง Cash จึงทำให้เกิด error non-exhaustive เพราะ match ใน Rust ต้องครอบคลุมทุก variant ของ enum ใน Correct Code จึงใช้ _ เพื่อครอบคลุมทุกกรณีที่เหลือให้แสดงผลออกมาเป็น "ชำระด้วยวิธีอื่น"`
+`Payment มี variants 3 อัน คือ Cash , CreditCard , PromptPay แต่ match จัดการเพียง Cash จึงทำให้เกิด error non-exhaustive เพราะ match ใน Rust ต้องครอบคลุมทุก variant ของ enum หรือใช้ _ (wildcard) เพื่อครอบคลุมกรณีที่ไม่ได้กำหนดไว้ให้แสดงผลออกมาเป็น "ชำระด้วยวิธีอื่น"`
 
 ---
 
@@ -549,7 +550,9 @@ fn main() {
 
 **Hint**
 
-`ให้ price เป็นทศนิยม(f64) และ stock เป็นจำนวนเต็ม(u32)` 
+`ให้ price เป็นทศนิยม(f64) และ stock เป็นจำนวนเต็ม(u32)`  
+`Tuple Variant: แบบเก็บข้อมูลเรียงตามลำดับ → ( )`  
+`Struct Variant: แบบเก็บข้อมูลเป็นฟิลด์ระบุชื่อชัดเจน → { }`
 
 **Solution**
 
@@ -604,6 +607,93 @@ fn main() {
 `Product ใช้เก็บข้อมูลของสินค้า โดย Snack ใช้ struct-variant และ Drink ใช้ tuple-variant ทั้งสองเก็บชื่อ ราคา และจำนวนสินค้าคงเหลือ ฟังก์ชัน check_availability ใช้ match เพื่อตรวจสอบว่า Product เป็น variant อะไร แล้วทำการตรวจสอบจำนวนสินค้าใน stock และคืน Some(price) หากยังมีสินค้า หรือ None หากสินค้าหมด`
 
 ---
+
+### Challenge — คำถามท้าทายผู้ฟัง
+
+**Problem**
+
+โค้ดด้านล่างนี้ **compile ผ่านหรือไม่?** ถ้าไม่ผ่าน ติดตรงไหน?
+
+```rust
+enum BookStatus {
+    Available,
+    Borrowed(String, u32),
+    Reserved { name: String, days: u32 },
+}
+fn check_book(status: &BookStatus) {
+    match status {
+        BookStatus::Borrowed(name, days) if * days > 30 => {
+            println!("{} borrowed for more than 30 days", name);
+        }
+        BookStatus::Borrowed(name, days) => {
+            println!("{} borrowed for {} days", name, days);
+        }
+        BookStatus::Available => {
+            println!("The book is available");
+        }
+    }
+    if let BookStatus::Reserved { name, days } = status {
+        if *days > 3 {
+            println!("{} has reserved the book for more than 3 days", name);
+        }
+    }
+}
+fn main() {
+    let book = BookStatus::Reserved {
+        name: String::from("Alice"),
+        days: 5,
+    };
+    check_book(&book);
+}
+```
+
+**Solution**
+
+`❌ compileไม่ผ่าน -> error[E0004]: non-exhaustive patterns: BookStatus::Reserved(_) not covered`
+
+**Explanation**
+
+`จาก Code จะเห็นว่า match มี 3 แขน แต่ 2 แขนแรกเป็น Borrowed ทั้งคู่ ส่วน Reserved ยังไม่ถูกจัดการ ทำให้ match ยังไม่ครอบคลุมทุก variant ของ enum`
+
+**Correct Code**
+
+```rust
+enum BookStatus {
+    Available,
+    Borrowed(String, u32),
+    Reserved { name: String, days: u32 },
+}
+fn check_book(status: &BookStatus) {
+    match status {
+        BookStatus::Borrowed(name, days) if *days > 30 => {
+            println!("{} borrowed for more than 30 days", name);
+        }
+        BookStatus::Borrowed(name, days) => {
+            println!("{} borrowed for {} days", name, days);
+        }
+        BookStatus::Available => {
+            println!("The book is available");
+        }
+        BookStatus::Reserved { .. } => {
+            println!("The book is reserved");
+        }
+    }
+    if let BookStatus::Reserved { name, days } = status {
+        if *days > 3 {
+            println!("{} has reserved the book for more than 3 days", name);
+        }
+    }
+}
+fn main() {
+    let book = BookStatus::Reserved {
+        name: String::from("Alice"),
+        days: 5,
+    };
+    check_book(&book);
+}
+```
+
+___
 
 ## 9. PPL Perspective
 
@@ -877,7 +967,7 @@ Rust ถูกออกแบบมาบนปรัชญา "Zero-cost Abstra
 
 **Member 4**
 
-`จัดทำหัวข้อที่ 7 Common Mistakes , หัวข้อที่ 8 Exercises และทดสอบโค้ดทั้งหมด`
+`จัดทำหัวข้อที่ 7 Common Mistakes , หัวข้อที่ 8 Exercises , Challenge และทดสอบโค้ดทั้งหมด`
 
 
 ---
@@ -919,7 +1009,7 @@ Rust ถูกออกแบบมาบนปรัชญา "Zero-cost Abstra
 | Member 1 | `0` | `4` | `1` | `0` | `เขียนเนื้อหาหัวข้อที่ 1 - 5 โดยทำหน้าที่สรุปแนวคิดหลัก อธิบายโค้ด syntax พร้อมตัวอย่างโค้ดอย่างสั้น` |
 | Member 2 | `0` | `20` | `1` | `0` | `จัดทำหัวข้อที่ 6 Runnable Code Examples ทดสอบโค้ด ปรับแก้คำ และตรวจเช็คเอกสารทั้งหมด` |
 | Member 3 | `0` | `16` | `0` | `0` | `จัดทำหัวข้อที่ 9 PPL Perspective และ หัวข้อที่ 10 Rust vs Other Language ` |
-| Member 4 | `0` | `10` | `1` | `0` | `จัดทำหัวข้อที่ 7 Common Mistakes และ หัวข้อที่ 8 Exercises ทดสอบโค้ด` |
+| Member 4 | `0` | `10` | `2` | `0` | `จัดทำหัวข้อที่ 7 Common Mistakes และ หัวข้อที่ 8 Exercises ทดสอบโค้ด` |
 
 ### Teamwork Reflection
 
