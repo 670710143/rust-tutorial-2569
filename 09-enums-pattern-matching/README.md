@@ -650,7 +650,7 @@ fn main() {
 **Solution**
 
 `❌ compileไม่ผ่าน`  
-`error[E0004]: non-exhaustive patterns: `BookStatus::Reserved(_)` not covered`  
+`error[E0004]: non-exhaustive patterns: BookStatus::Reserved(_) not covered`  
 `match มี 3 แขน ดูเหมือนครบ แต่จริงๆ 2 แขนแรกเป็น Borrowed ทั้งคู่ ส่วน Reserved ยังไม่ถูกจัดการ ทำให้ match ไม่ครอบคลุมทุก variant ของ enum`
 
 **Correct Code**
