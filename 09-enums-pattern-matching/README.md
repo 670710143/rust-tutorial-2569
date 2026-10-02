@@ -645,6 +645,7 @@ fn main() {
     };
     check_book(&book);
 }
+```
 
 **Solution**
 
